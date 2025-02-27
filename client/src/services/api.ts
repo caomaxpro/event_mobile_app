@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // BASE_URL
 
-const API_URL = 'http://localhost:5000/api';
+const API_URL = 'http://192.168.12.104:5000/api';
 
 const api = axios.create({
   baseURL: API_URL,
@@ -21,6 +21,8 @@ api.interceptors.request.use(
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
+
+    console.log(config)
     return config;
   },
   (error) => Promise.reject(error)

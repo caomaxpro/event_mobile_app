@@ -20,7 +20,8 @@ import {OtherLoginOptionComponent} from '@src/components/OtherLoginOption';
 import {CircularRightArrow} from '@src/assets/svg/CircularRightArrow';
 import ArrowButton from '@src/components/ArrowButton';
 import {useLoginForm} from '@src/hooks/useLoginForm';
-import PasswordInputComponent from '@src/components/PasswordInputComponent';
+import {CustomPasswordInputComponent} from '@src/components/PasswordInputComponent';
+import {CustomEmailInputComponent} from '@src/components/EmailInputComponent';
 // import {AuthStackParamList} from '@src/navigation/AuthNavigation';
 
 // type LoginScreenProps = StackScreenProps<AuthStackParamList, 'LoginScreen'> & {
@@ -28,7 +29,7 @@ import PasswordInputComponent from '@src/components/PasswordInputComponent';
 // };
 
 export default function LoginScreen() {
-  const {emailField, passwordField} = useLoginForm();
+  const {emailField, passwordField, handleSubmit} = useLoginForm();
 
   const {state} = useSettingContext();
 
@@ -53,8 +54,8 @@ export default function LoginScreen() {
         Sign in
       </CustomText>
 
-      <EmailInputComponent inputField={emailField} />
-      <PasswordInputComponent passwordField={passwordField} />
+      <CustomEmailInputComponent inputField={emailField} />
+      <CustomPasswordInputComponent passwordField={passwordField} />
 
       <CustomContainerComponent
         customStyle={{width: 317}}
@@ -76,7 +77,12 @@ export default function LoginScreen() {
         </CustomButton>
       </CustomContainerComponent>
 
-      <ArrowButton label="SIGN IN" onPress={() => {}} />
+      <ArrowButton
+        label="SIGN IN"
+        onPress={() => {
+          handleSubmit();
+        }}
+      />
 
       <OtherLoginOptionComponent />
 

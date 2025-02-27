@@ -8,7 +8,7 @@ type EmailInputComponentProps = {
   inputField: any;
 };
 
-const EmailInputComponent: React.FC<EmailInputComponentProps> = ({
+export const CustomEmailInputComponent: React.FC<EmailInputComponentProps> = ({
   inputField,
 }) => {
   const {state} = useSettingContext();
@@ -26,10 +26,9 @@ const EmailInputComponent: React.FC<EmailInputComponentProps> = ({
       textContentType="emailAddress"
       inputField={inputField}
       placeholder="abc@email.com"
+      autoCapitalize="none"
     />
   );
 };
-
-export default EmailInputComponent;
 
 const styles = StyleSheet.create({});

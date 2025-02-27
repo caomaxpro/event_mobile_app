@@ -62,11 +62,11 @@ function App(): React.JSX.Element {
         translucent={true}
       />
 
-      <ResetPasswordScreen />
+      {/* <ResetPasswordScreen /> */}
 
       {/* <VerificationScreen /> */}
       {/* <RegisterScreen /> */}
-      {/* <LoginScreen /> */}
+      <LoginScreen />
 
       {/* <NavigationContainer>
         {user1 && user1.login ? <MainTabNavigator /> : <AuthNavigator />}

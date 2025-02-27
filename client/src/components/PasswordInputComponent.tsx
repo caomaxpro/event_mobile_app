@@ -6,11 +6,12 @@ import {CustomTextInputComponent} from './CustomInputField';
 
 type PasswordInputComponentProps = {
   passwordField: any;
+  confirmPassword?: false;
 };
 
-const PasswordInputComponent: React.FC<PasswordInputComponentProps> = ({
-  passwordField,
-}) => {
+export const CustomPasswordInputComponent: React.FC<
+  PasswordInputComponentProps
+> = ({passwordField, confirmPassword = false}) => {
   const {state} = useSettingContext();
 
   return (
@@ -27,11 +28,9 @@ const PasswordInputComponent: React.FC<PasswordInputComponentProps> = ({
       textContentType="password"
       inputField={passwordField}
       password={true}
-      placeholder="Your password"
+      placeholder={!confirmPassword ? 'Your password' : 'Confirm your password'}
     />
   );
 };
-
-export default PasswordInputComponent;
 
 const styles = StyleSheet.create({});
