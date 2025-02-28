@@ -17,6 +17,9 @@ import {OtherLoginOptionComponent} from '@src/components/OtherLoginOption';
 import {CircularRightArrow} from '@src/assets/svg/CircularRightArrow';
 import HeaderComponent from '@src/components/HeaderComponent';
 import ArrowButton from '@src/components/ArrowButton';
+import {useRegisterForm} from '@src/hooks/useRegisterForm';
+import {CustomPasswordInputComponent} from '@src/components/PasswordInputComponent';
+import {CustomEmailInputComponent} from '@src/components/EmailInputComponent';
 // import {AuthStackParamList} from '@src/navigation/AuthNavigation';
 
 // type LoginScreenProps = StackScreenProps<AuthStackParamList, 'LoginScreen'> & {
@@ -24,8 +27,13 @@ import ArrowButton from '@src/components/ArrowButton';
 // };
 
 export default function RegisterScreen() {
-  const emailInputField = useEmailInput('');
-  const passwordInputField = usePasswordInput('');
+  const {
+    fullNameField,
+    emailField,
+    passwordField,
+    repasswordField,
+    handleSubmit,
+  } = useRegisterForm();
 
   const {state} = useSettingContext();
 
@@ -53,62 +61,29 @@ export default function RegisterScreen() {
         preIcon={
           <CustomIcon
             type="AntDesign"
-            name="mail"
+            name="user"
             size={22}
             color={state.theme.inputBorder}
           />
         }
         textContentType="emailAddress"
-        inputField={emailInputField}
-        placeholder="abc@email.com"
+        inputField={fullNameField}
+        placeholder="Full name"
       />
-      <CustomTextInputComponent
-        preIcon={
-          <CustomIcon
-            type="AntDesign"
-            name="mail"
-            size={22}
-            color={state.theme.inputBorder}
-          />
-        }
-        textContentType="emailAddress"
-        inputField={emailInputField}
-        placeholder="abc@email.com"
+      <CustomEmailInputComponent inputField={emailField} />
+
+      <CustomPasswordInputComponent passwordField={passwordField} />
+      <CustomPasswordInputComponent
+        passwordField={repasswordField}
+        confirmPassword={true}
       />
 
-      <CustomTextInputComponent
-        // containerStyle={}
-        preIcon={
-          <CustomIcon
-            type="Feather"
-            name="lock"
-            size={22}
-            color={state.theme.inputBorder}
-          />
-        }
-        textContentType="password"
-        inputField={passwordInputField}
-        password={true}
-        placeholder="Your password"
+      <ArrowButton
+        label="SIGN UP"
+        onPress={() => {
+          handleSubmit();
+        }}
       />
-
-      <CustomTextInputComponent
-        // containerStyle={}
-        preIcon={
-          <CustomIcon
-            type="Feather"
-            name="lock"
-            size={22}
-            color={state.theme.inputBorder}
-          />
-        }
-        textContentType="password"
-        inputField={passwordInputField}
-        password={true}
-        placeholder="Your password"
-      />
-
-      <ArrowButton label="SIGN UP" onPress={() => {}} />
 
       <OtherLoginOptionComponent />
 

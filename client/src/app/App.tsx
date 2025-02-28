@@ -65,8 +65,8 @@ function App(): React.JSX.Element {
       {/* <ResetPasswordScreen /> */}
 
       {/* <VerificationScreen /> */}
-      {/* <RegisterScreen /> */}
-      <LoginScreen />
+      <RegisterScreen />
+      {/* <LoginScreen /> */}
 
       {/* <NavigationContainer>
         {user1 && user1.login ? <MainTabNavigator /> : <AuthNavigator />}

@@ -4,7 +4,10 @@ const User = require('../models/User');
 
 // Register new user
 exports.register = async (req, res) => {
-  const { username, email, password } = req.body;
+    console.log(req.body)
+
+
+  const { name, email, password } = req.body;
 
   try {
     const existingUser = await User.findOne({ email });

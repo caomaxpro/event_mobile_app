@@ -6,7 +6,7 @@ import {CustomTextInputComponent} from './CustomInputField';
 
 type PasswordInputComponentProps = {
   passwordField: any;
-  confirmPassword?: false;
+  confirmPassword?: boolean;
 };
 
 export const CustomPasswordInputComponent: React.FC<

@@ -9,12 +9,13 @@ import {
   ScrollView,
   ScrollViewProps,
   SafeAreaView,
+  StatusBar,
 } from 'react-native';
 import React, {useEffect} from 'react';
-import {SCREEN_WIDTH} from '@src/utils/appInfo';
+import {SCREEN_HEIGHT, SCREEN_WIDTH} from '@src/utils/appInfo';
 import {useSettingContext} from '@src/context/SettingContext';
 
-type ScreenComponentProps = ViewProps & {
+type ScreenComponentProps = ScrollViewProps & {
   children?: React.ReactNode;
   customStyle?: StyleProp<ViewStyle>;
   contentStyle?: StyleProp<ViewStyle>;
@@ -38,11 +39,14 @@ export default function ScreenComponent({
   const backgroundImage = bgImage ?? theme.bgImage;
 
   return (
-    <SafeAreaView
+    <ScrollView
       {...props}
-      style={[
+      contentContainerStyle={[
         styles.default_container,
-        {backgroundColor: theme.background},
+        {
+          backgroundColor: theme.background,
+          height: SCREEN_HEIGHT + (StatusBar?.currentHeight || 0),
+        },
         customStyle,
       ]}>
       {displayBackgroundImage ? (
@@ -55,23 +59,22 @@ export default function ScreenComponent({
       ) : (
         <View style={[styles.content, contentStyle]}>{children}</View>
       )}
-    </SafeAreaView>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   default_container: {
     // flex: 1,
-    height: '100%',
-    width: '100%',
-    // alignContent: 'center',
-    // justifyContent: 'center',
+    width: SCREEN_WIDTH,
+    alignContent: 'center',
+    justifyContent: 'center',
     // alignItems: 'center',
   },
 
   backgroundImage: {
-    flex: 1,
-    width: '100%',
+    // flex: 1,
+    width: SCREEN_WIDTH,
     height: '100%',
     alignSelf: 'center',
   },

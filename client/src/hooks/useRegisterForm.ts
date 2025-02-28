@@ -3,6 +3,7 @@ import {View, Text, TextInput, StyleSheet, TextInputProps} from 'react-native';
 import * as validator from '@src/utils/validatorUtils';
 import {log} from '@src/utils/logUtils';
 import { useEmailInput, useInput, usePasswordInput, useRepasswordInput } from './useInputField';
+import { registerUser } from '@src/services/authService';
 
 interface UseInputFieldProps {
   initialValue?: string | number;
@@ -17,11 +18,13 @@ export function useRegisterForm() {
 
   const handleSubmit = () => {
       const data = {
-          fullname: fullNameField.value,
+          name: fullNameField.value,
           email: emailField.value,
           password: passwordField.value,
           repassword: repasswordField.value,
       }
+
+      registerUser(data)
   };
     
   return {fullNameField, emailField, passwordField, repasswordField, handleSubmit};
