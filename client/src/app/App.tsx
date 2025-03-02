@@ -28,6 +28,7 @@ import RegisterScreen from '@src/screens/auth/RegisterScreen';
 import VerificationScreen from '@src/screens/auth/VerificationScreen';
 import {ResetPasswordScreen} from '@src/screens/auth/ResetPasswordScreen';
 import BASE_URL from '@src/utils/envVariables';
+import {loadState} from '@src/utils/storageUtils';
 
 type user = {
   email: string;
@@ -47,11 +48,20 @@ function App(): React.JSX.Element {
   useEffect(() => {
     console.log(BASE_URL);
 
-    //   const timer = setTimeout(() => {
-    //     setSplashScreen(false);
-    //   }, 2000);
+    const timer = setTimeout(async () => {
+      // fetch user data from storage
+      const user = await loadState();
 
-    //   return () => clearTimeout(timer);
+      if (user) {
+      }
+
+      // check if user login => login? == true => main screen
+      // else => onboarding screen
+
+      setSplashScreen(false);
+    }, 2000);
+
+    return () => clearTimeout(timer);
   });
 
   return (
@@ -65,14 +75,17 @@ function App(): React.JSX.Element {
       {/* <ResetPasswordScreen /> */}
 
       {/* <VerificationScreen /> */}
-      <RegisterScreen />
+      {/* <RegisterScreen /> */}
       {/* <LoginScreen /> */}
 
-      {/* <NavigationContainer>
-        {user1 && user1.login ? <MainTabNavigator /> : <AuthNavigator />}
-      </NavigationContainer> */}
-
-      {/* {splashScreen ? <SplashScreen /> : <AuthNavigator />} */}
+      {splashScreen ? (
+        <SplashScreen />
+      ) : (
+        <NavigationContainer>
+          {user1 && user1.login ? <MainTabNavigator /> : <AuthNavigator />}
+          {/* <AuthNavigator /> */}
+        </NavigationContainer>
+      )}
     </ScreenComponent>
   );
 }

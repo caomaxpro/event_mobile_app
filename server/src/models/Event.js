@@ -1,5 +1,5 @@
-const mongoose = require('mongoose')
-const Schema = mongoose.Schema
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
 const eventSchema = new Schema({
   title: {
@@ -22,7 +22,7 @@ const eventSchema = new Schema({
     required: [true, 'Event date is required'],
     validate: {
       validator: function (value) {
-        return value > Date.now() // Event date must be in the future
+        return value > Date.now(); // Event date must be in the future
       },
       message: 'Event date must be in the future',
     },
@@ -52,17 +52,17 @@ const eventSchema = new Schema({
     default: [],
     validate: {
       validator: function (value) {
-        return Array.isArray(value) // Ensure participants is an array
+        return Array.isArray(value); // Ensure participants is an array
       },
       message: 'Participants must be an array',
     },
   },
   organizers: {
     type: [String],
-    default: [],
+    default: [],  // No longer required
     validate: {
       validator: function (value) {
-        return Array.isArray(value) // Ensure organizers is an array
+        return Array.isArray(value); // Ensure organizers is an array
       },
       message: 'Organizers must be an array',
     },
@@ -91,8 +91,8 @@ const eventSchema = new Schema({
     required: [true, 'Event image is required'],
     validate: {
       validator: function (value) {
-        const regex = /(http(s)?:)([/|.|\w|\s|-])*\.(?:jpg|jpeg|gif|png|bmp)/
-        return regex.test(value) // Validate URL of the image
+        const regex = /(http(s)?:)([/|.|\w|\s|-])*\.(?:jpg|jpeg|gif|png|bmp)/;
+        return regex.test(value); // Validate URL of the image
       },
       message: 'Invalid image URL format',
     },
@@ -108,7 +108,7 @@ const eventSchema = new Schema({
         required: [true, 'Event time is required'],
         validate: {
           validator: function (value) {
-            return value > Date.now() // Activity time must be in the future
+            return value > Date.now(); // Activity time must be in the future
           },
           message: 'Event time must be in the future',
         },
@@ -132,13 +132,13 @@ const eventSchema = new Schema({
     required: [true, 'Ticket sales end date is required'],
     validate: {
       validator: function (value) {
-        return value > Date.now() // Sales end date must be in the future
+        return value > Date.now(); // Sales end date must be in the future
       },
       message: 'Ticket sales end date must be in the future',
     },
   },
-})
+});
 
-const Event = mongoose.model('Event', eventSchema)
+const Event = mongoose.model('Event', eventSchema);
 
-module.exports = Event
+module.exports = Event;

@@ -1,3 +1,4 @@
+import {useNavigation} from '@react-navigation/native';
 import ArrowButton from '@src/components/ArrowButton';
 import CustomButton from '@src/components/ButtonComponent';
 import CustomContainerComponent from '@src/components/ContainerComponent';
@@ -5,6 +6,7 @@ import CustomText from '@src/components/CustomText';
 import HeaderComponent from '@src/components/HeaderComponent';
 import {useSettingContext} from '@src/context/SettingContext';
 import {log} from '@src/utils/logUtils';
+import {loadState} from '@src/utils/storageUtils';
 import React, {useState, useRef, useEffect} from 'react';
 import {
   View,
@@ -14,10 +16,17 @@ import {
   StyleSheet,
 } from 'react-native';
 
+import {RootStackParamList} from '@src/navigation/AuthNavigation';
+import {StackNavigationProp} from '@react-navigation/stack';
+
+type NavigationProp = StackNavigationProp<RootStackParamList>;
+
 const VerificationScreen: React.FC = () => {
   const [curIndex, setCurIndex] = useState<number>(0);
   const [code, setCode] = useState(['', '', '', '']);
   const [timer, setTimer] = useState(1000);
+
+  const navigation = useNavigation<NavigationProp>();
 
   const {state} = useSettingContext();
 
@@ -62,8 +71,20 @@ const VerificationScreen: React.FC = () => {
     }
   };
 
-  const handleContinue = () => {
-    console.log('Verification code:', code.join(''));
+  const handleContinue = async () => {
+    const passcode = code.join('');
+
+    // load state data
+    const state = await loadState();
+
+    if (
+      Date.now() < (state.token.expiredAt ?? 0) &&
+      passcode === state.token.passcode
+    ) {
+      navigation.navigate('ResetPasswordScreen', {isEmailVerified: true});
+    }
+
+    navigation.navigate('ResetPasswordScreen', {isEmailVerified: false});
   };
 
   const handleResendCode = () => {
@@ -125,7 +146,12 @@ const VerificationScreen: React.FC = () => {
           ))}
         </CustomContainerComponent>
 
-        <ArrowButton label="CONTINUE" onPress={() => {}} />
+        <ArrowButton
+          label="CONTINUE"
+          onPress={() => {
+            handleContinue();
+          }}
+        />
 
         <CustomContainerComponent style={styles.resendContainer}>
           <CustomButton

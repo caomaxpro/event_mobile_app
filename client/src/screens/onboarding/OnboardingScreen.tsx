@@ -1,6 +1,6 @@
 import {StyleSheet, Text, View} from 'react-native';
 import React, {useState} from 'react';
-import ScreenComponent from 'src/components/ScreenComponent';
+import ScreenComponent from '@src/components/ScreenComponent';
 import {Image} from 'react-native-reanimated/lib/typescript/Animated';
 import Animated from 'react-native-reanimated';
 import {SCREEN_WIDTH} from '@src/utils/appInfo';
@@ -65,6 +65,8 @@ const OnboardingScreen = () => {
         }}
         source={boardings[boardingIndex].image}
       />
+
+      <Text style={{position: 'absolute', top: 350}}>Hello</Text>
 
       <OnboardingSkip
         boardingIndex={boardingIndex}

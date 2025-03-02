@@ -15,7 +15,7 @@ app.use(bodyParser.json());
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/user', userRoutes);
-app.use('/api', eventRoutes);
+app.use('/api/event', eventRoutes);
 
 // MongoDB connection
 // mongoose.connect('mongodb://localhost:27017/event_hub', { useNewUrlParser: true, useUnifiedTopology: true })

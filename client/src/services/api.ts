@@ -1,3 +1,5 @@
+import { log } from '@src/utils/logUtils';
+import { loadState } from '@src/utils/storageUtils';
 import axios from 'axios';
 
 // BASE_URL
@@ -17,12 +19,19 @@ const api = axios.create({
 
 api.interceptors.request.use(
   async (config: any) => {
-    const token = ''; 
+
+    const settingState = await loadState()
+
+    log('[API]', settingState)
+
+    const token = settingState.token.jwt; 
+
+
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
 
-    console.log(config)
+    // console.log(config)
     return config;
   },
   (error) => Promise.reject(error)

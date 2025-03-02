@@ -21,7 +21,9 @@ export function useLoginForm() {
         }
 
         // send data to server side
-        await loginUser(data)
+        const response = await loginUser(data)
+
+        log('[Use Login]', response)
     };
     
     return {emailField, passwordField, handleSubmit};

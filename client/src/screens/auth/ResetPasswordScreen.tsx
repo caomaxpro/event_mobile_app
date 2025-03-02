@@ -2,7 +2,7 @@ import ArrowButton from '@src/components/ArrowButton';
 import CustomButton from '@src/components/ButtonComponent';
 import CustomContainerComponent from '@src/components/ContainerComponent';
 import {CustomTextInputComponent} from '@src/components/CustomInputField';
-import EmailInputComponent from '@src/components/EmailInputComponent';
+import {CustomEmailInputComponent} from '@src/components/EmailInputComponent';
 import CustomText from '@src/components/CustomText';
 import HeaderComponent from '@src/components/HeaderComponent';
 import {useSettingContext} from '@src/context/SettingContext';
@@ -17,9 +17,18 @@ import {
   StyleSheet,
 } from 'react-native';
 import {useLoginForm} from '@src/hooks/useLoginForm';
+import {CustomPasswordInputComponent} from '@src/components/PasswordInputComponent';
+import {useRegisterForm} from '@src/hooks/useRegisterForm';
+import {sendEmail} from '@src/services/authService';
 
-export const ResetPasswordScreen: React.FC = () => {
-  const {emailField} = useLoginForm();
+type ResetPasswordScreenProp = {
+  isEmailVerified?: boolean;
+};
+
+export const ResetPasswordScreen: React.FC<ResetPasswordScreenProp> = ({
+  isEmailVerified = false,
+}): React.JSX.Element => {
+  const {emailField, passwordField, repasswordField} = useRegisterForm();
 
   return (
     <CustomContainerComponent
@@ -45,9 +54,24 @@ export const ResetPasswordScreen: React.FC = () => {
           Please enter your email address to request a password reset
         </CustomText>
 
-        <EmailInputComponent inputField={emailField} />
+        {!isEmailVerified ? (
+          <CustomEmailInputComponent inputField={emailField} />
+        ) : (
+          <CustomContainerComponent contentStyle={{flexDirection: 'column'}}>
+            <CustomPasswordInputComponent passwordField={passwordField} />
+            <CustomPasswordInputComponent
+              passwordField={repasswordField}
+              confirmPassword={true}
+            />
+          </CustomContainerComponent>
+        )}
 
-        <ArrowButton label="SEND" onPress={() => {}} />
+        <ArrowButton
+          label="SEND"
+          onPress={() => {
+            sendEmail(emailField.value);
+          }}
+        />
       </CustomContainerComponent>
     </CustomContainerComponent>
   );

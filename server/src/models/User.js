@@ -1,69 +1,91 @@
 const mongoose = require('mongoose');
+const bcrypt = require('bcryptjs')
 
 const userSchema = new mongoose.Schema({
-  full_name: {
+  username: {
     type: String,
-    required: true,
-    minlength: 3,
-    maxlength: 100
+    required: [true, 'Full name is required'],
+    minlength: [3, 'Full name must be at least 3 characters'],
+    maxlength: [100, 'Full name cannot exceed 100 characters']
   },
   email: {
     type: String,
-    required: true,
+    required: [true, 'Email is required'],
     unique: true,
-    validate(value) {
-      if (!validator.isEmail(value)) {
-        throw new Error('Invalid email format');
-      }
+    validate: {
+      validator: function (value) {
+        // Basic email format validation using regex
+        const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+        return emailRegex.test(value);
+      },
+      message: 'Invalid email format'
     }
   },
   password: {
     type: String,
-    required: true,
-    minlength: 6
+    required: [true, 'Password is required'],
+    minlength: [8, 'Password must be at least 8 characters'],
+    validate: {
+      validator: function (value) {
+        // Regular expression for password validation
+        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+        return passwordRegex.test(value);
+      },
+      message: 'Password must be at least 8 characters long, contain at least one uppercase letter, one lowercase letter, one number, and one special character.'
+    }
   },
-  avatar: {
+  profile_picture: {
     type: String,
     default: ''
   },
   role: {
     type: String,
-    enum: ['admin', 'participant'],
-    default: 'participant'
+    enum: {
+      values: ['admin', 'user'],
+      message: 'Role must be either "admin", or "user"'
+    },
+    default: 'user'
   },
   bio: {
     type: String,
-    maxlength: 300
+    maxlength: [300, 'Bio cannot exceed 300 characters']
   },
-  phone: {
+  phone_number: {
     type: String,
-    validate(value) {
-      if (!validator.isMobilePhone(value, 'any', { strictMode: false })) {
-        throw new Error('Invalid phone number');
-      }
+    validate: {
+      validator: function (value) {
+        // Basic phone number validation (using a regex for international phone numbers)
+        const phoneRegex = /^\+?[1-9]\d{1,14}$/;
+        return !value || phoneRegex.test(value);
+      },
+      message: 'Invalid phone number format'
     }
   },
-  
   location: {
     type: String,
-    maxlength: 100
+    maxlength: [100, 'Location cannot exceed 100 characters']
   },
-
   social_links: {
     facebook: {
       type: String,
-      validate(value) {
-        if (value && !validator.isURL(value)) {
-          throw new Error('Invalid URL format for Facebook');
-        }
+      validate: {
+        validator: function (value) {
+          // Simple URL validation using regex
+          const urlRegex = /^(https?:\/\/)?([\w\-]+(\.[\w\-]+)+)([\w\-._~:/?#[\]@!$&'()*+,;=.])*/;
+          return !value || urlRegex.test(value);
+        },
+        message: 'Invalid URL format for Facebook'
       }
     },
     github: {
       type: String,
-      validate(value) {
-        if (value && !validator.isURL(value)) {
-          throw new Error('Invalid URL format for GitHub');
-        }
+      validate: {
+        validator: function (value) {
+          // Simple URL validation using regex
+          const urlRegex = /^(https?:\/\/)?([\w\-]+(\.[\w\-]+)+)([\w\-._~:/?#[\]@!$&'()*+,;=.])*/;
+          return !value || urlRegex.test(value);
+        },
+        message: 'Invalid URL format for GitHub'
       }
     }
   },
@@ -84,33 +106,56 @@ const userSchema = new mongoose.Schema({
   last_login: {
     type: Date
   },
-  status: {
+  account_status: {
     type: String,
-    enum: ['active', 'inactive'],
+    enum: {
+      values: ['active', 'inactive'],
+      message: 'Account status must be either "active" or "inactive"'
+    },
     default: 'active'
   },
   is_verified: {
     type: Boolean,
     default: false
   },
-  subscription_status: {
+  subscription_plan: {
     type: String,
-    enum: ['free', 'premium'],
+    enum: {
+      values: ['free', 'premium'],
+      message: 'Subscription plan must be either "free" or "premium"'
+    },
     default: 'free'
   },
-  payment_history: {
-    type: [Object],
-    default: []
-  }
+  payment_history: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Transaction' }]
 });
 
 // Hash password before saving
-userSchema.pre('save', async function (next) {
+// Password validation before hashing
+userSchema.pre('save', async function(next) {
   const user = this;
+
+  // Check if the password is being modified
   if (user.isModified('password')) {
+    // Hash the password if it's valid
     user.password = await bcrypt.hash(user.password, 8);
   }
+
   next();
+});
+
+userSchema.pre('save', function (next) {
+    if (!this.isNew && this.isModified('role') && this.role !== 'participant') {
+        return next(new Error('Only admins can change roles.'));
+    }
+    next();
+});
+
+userSchema.pre('findOneAndUpdate', function (next) {
+    const update = this.getUpdate();
+    if (update.role && update.role !== 'participant') {
+        return next(new Error('Only admins can change roles.'));
+    }
+    next();
 });
 
 const User = mongoose.model('User', userSchema);

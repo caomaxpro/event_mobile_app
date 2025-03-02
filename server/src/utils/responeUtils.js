@@ -1,0 +1,5 @@
+const generateReturnData = (data) => {
+    return {
+        
+    }
+}

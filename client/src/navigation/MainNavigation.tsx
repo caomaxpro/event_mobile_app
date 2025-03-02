@@ -2,6 +2,7 @@
 import React from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import HomeScreen from '@src/screens/home/HomeScreen';
+import {NavigationContainer} from '@react-navigation/native';
 
 export type MainTabParamList = {
   HomeScreen: undefined;
