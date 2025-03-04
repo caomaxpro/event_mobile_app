@@ -4,6 +4,11 @@ import * as validator from '@src/utils/validatorUtils';
 import {log} from '@src/utils/logUtils';
 import { useEmailInput, useInput, usePasswordInput, useRepasswordInput } from './useInputField';
 import { loginUser } from '@src/services/authService';
+import { useNavigation } from '@react-navigation/native';
+import { AxiosResponse } from 'axios';
+// import { useAuthContext } from '@src/context/AuthContext';
+import { useSettingContext } from '@src/context/SettingContext';
+import { useAppNavigation } from './userAppNavigation';
 
 interface UseInputFieldProps {
   initialValue?: string | number;
@@ -13,17 +18,33 @@ interface UseInputFieldProps {
 export function useLoginForm() {
     const emailField = useEmailInput('')
     const passwordField = usePasswordInput('')
+
+    const {state, setState} = useSettingContext()
+
+    // const {login} = useAuthContext()
+
+    const navigation = useAppNavigation()
    
-    const handleSubmit = async () => {
+    const handleSubmit = async (): Promise<void> => {
         const data = {
             email: emailField.value,
             password: passwordField.value,
         }
 
-        // send data to server side
-        const response = await loginUser(data)
+        log('[Login Form]', data)
 
-        log('[Use Login]', response)
+        // send data to server side
+        const res = await loginUser(data)
+
+        // receive respone => if ok => save to state
+        if (res.status === 200) {
+            console.log(res.data.token)
+            // await login(res.data.token)
+
+            setState({...state, token: {jwt: res.data.token}})
+            
+            navigation.authNavigation.navigate('DrawerNavigator')
+        }
     };
     
     return {emailField, passwordField, handleSubmit};

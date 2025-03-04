@@ -1,7 +1,7 @@
 // LoginScreen.tsx
-import React, {useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {View, Text, Button, StyleSheet} from 'react-native';
-import {StackScreenProps} from '@react-navigation/stack';
+// import {StackScreenProps} from '@react-navigation/stack';
 import ScreenComponent from '@src/components/ScreenComponent';
 import {
   CustomTextInputComponent,
@@ -22,6 +22,8 @@ import ArrowButton from '@src/components/ArrowButton';
 import {useLoginForm} from '@src/hooks/useLoginForm';
 import {CustomPasswordInputComponent} from '@src/components/PasswordInputComponent';
 import {CustomEmailInputComponent} from '@src/components/EmailInputComponent';
+import {log} from '@src/utils/logUtils';
+// import {AuthContext, useAuthContext} from '@src/context/AuthContext';/
 // import {AuthStackParamList} from '@src/navigation/AuthNavigation';
 
 // type LoginScreenProps = StackScreenProps<AuthStackParamList, 'LoginScreen'> & {
@@ -31,14 +33,25 @@ import {CustomEmailInputComponent} from '@src/components/EmailInputComponent';
 export default function LoginScreen() {
   const {emailField, passwordField, handleSubmit} = useLoginForm();
 
-  const {state} = useSettingContext();
+  const {state, setState} = useSettingContext();
+  //   const {login} = useContext(AuthContext);
 
   const [isRememberUser, setRememberUser] = useState<boolean>(false);
 
+  useEffect(() => {
+    console.log('Rendering !!!');
+
+    // if (navigation) {
+    //   setNavigation(navigation);
+    // }
+  }, []);
+
   return (
     <ScreenComponent
-      //   contentStyle={{justifyContent: 'center'}}
-      displayBackgroundImage={true}>
+      //   customStyle={{height: '100%', width: '100%', flex: 1}}
+      //   contentStyle={{height: '100%', width: '100%', flex: 1}}
+      // contentStyle={{justifyContent: 'center'}}
+      displayBackgroundImage={false}>
       <CustomContainerComponent customStyle={{marginBottom: 50}}>
         <EventHubLogo />
       </CustomContainerComponent>
@@ -79,8 +92,10 @@ export default function LoginScreen() {
 
       <ArrowButton
         label="SIGN IN"
-        onPress={() => {
-          handleSubmit();
+        onPress={async () => {
+          log('[Login Screen]', 'Sign In');
+
+          await handleSubmit();
         }}
       />
 

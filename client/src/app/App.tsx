@@ -18,17 +18,20 @@ import {
 
 import {defaultStyle} from '@src/styles/defaultStyles';
 import SplashScreen from '@src/screens/SplashScreen';
-import AuthNavigator from '@src/navigation/AuthNavigation';
+import AuthNavigator from '@src/navigation/AuthNavigator';
 import ScreenComponent from '@src/components/ScreenComponent';
 import OnboardingScreen from '@src/screens/onboarding/OnboardingScreen';
 import {NavigationContainer} from '@react-navigation/native';
-import MainTabNavigator from '@src/navigation/MainNavigation';
+import MainTabNavigator from '@src/navigation/MainNavigator';
 import LoginScreen from '@src/screens/auth/LoginScreen';
 import RegisterScreen from '@src/screens/auth/RegisterScreen';
 import VerificationScreen from '@src/screens/auth/VerificationScreen';
 import {ResetPasswordScreen} from '@src/screens/auth/ResetPasswordScreen';
-import BASE_URL from '@src/utils/envVariables';
+// import BASE_URL from '@src/utils/envVariables';
 import {loadState} from '@src/utils/storageUtils';
+import MainNavigator from '@src/navigation/MainNavigator';
+import TabNavigator from '@src/navigation/TabNavigator';
+import AppRouters from '@src/navigation/AppRouter';
 
 type user = {
   email: string;
@@ -43,50 +46,28 @@ const user1: user = {
 };
 
 function App(): React.JSX.Element {
-  const [splashScreen, setSplashScreen] = useState<boolean>(true);
-
-  useEffect(() => {
-    console.log(BASE_URL);
-
-    const timer = setTimeout(async () => {
-      // fetch user data from storage
-      const user = await loadState();
-
-      if (user) {
-      }
-
-      // check if user login => login? == true => main screen
-      // else => onboarding screen
-
-      setSplashScreen(false);
-    }, 2000);
-
-    return () => clearTimeout(timer);
-  });
-
   return (
-    <ScreenComponent>
+    <View style={{flex: 1}}>
       <StatusBar
         animated={true}
         backgroundColor="transparent"
         translucent={true}
       />
 
-      {/* <ResetPasswordScreen /> */}
+      <NavigationContainer>
+        <AppRouters />
+      </NavigationContainer>
+    </View>
 
-      {/* <VerificationScreen /> */}
-      {/* <RegisterScreen /> */}
-      {/* <LoginScreen /> */}
+    // <ScreenComponent
+    //   customStyle={{flex: 1, width: '100%', height: '100%'}}
+    //   contentStyle={{flex: 1, width: '100%', height: '100%'}}
+    //   displayBackgroundImage={false}
+    //   >
 
-      {splashScreen ? (
-        <SplashScreen />
-      ) : (
-        <NavigationContainer>
-          {user1 && user1.login ? <MainTabNavigator /> : <AuthNavigator />}
-          {/* <AuthNavigator /> */}
-        </NavigationContainer>
-      )}
-    </ScreenComponent>
+    //   {/* <OnboardingScreen /> */}
+
+    // </ScreenComponent>
   );
 }
 

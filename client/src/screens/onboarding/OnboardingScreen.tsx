@@ -1,5 +1,5 @@
 import {StyleSheet, Text, View} from 'react-native';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import ScreenComponent from '@src/components/ScreenComponent';
 import {Image} from 'react-native-reanimated/lib/typescript/Animated';
 import Animated from 'react-native-reanimated';
@@ -7,9 +7,10 @@ import {SCREEN_WIDTH} from '@src/utils/appInfo';
 import CustomContainerComponent from '@src/components/ContainerComponent';
 import CustomButton from '@src/components/ButtonComponent';
 import OnboardingSkip from '@src/components/OnboardingSkip';
-import {StackScreenProps} from '@react-navigation/stack';
+// import {StackScreenProps} from '@react-navigation/stack';
 
 import {useNavigation} from '@react-navigation/native';
+import {log} from '@src/utils/logUtils';
 
 type Boarding = {
   image: number;
@@ -41,6 +42,10 @@ const boardings: Boarding[] = [
 const OnboardingScreen = () => {
   const [boardingIndex, setBoardingIndex] = useState<number>(0);
 
+  useEffect(() => {
+    log('[Onboaring Screen]', 'running!!!');
+  });
+
   return (
     <ScreenComponent
       contentStyle={{
@@ -66,14 +71,14 @@ const OnboardingScreen = () => {
         source={boardings[boardingIndex].image}
       />
 
-      <Text style={{position: 'absolute', top: 350}}>Hello</Text>
+      {/* <Text style={{position: 'absolute', top: 350}}>Hello</Text> */}
 
-      <OnboardingSkip
+      {/* <OnboardingSkip
         boardingIndex={boardingIndex}
         setBoardingIndex={setBoardingIndex}
         message1={boardings[boardingIndex].message1}
         message2={boardings[boardingIndex].message2}
-      />
+      /> */}
     </ScreenComponent>
   );
 };

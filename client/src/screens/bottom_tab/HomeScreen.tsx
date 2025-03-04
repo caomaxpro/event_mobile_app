@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {
   View,
   Text,
@@ -7,22 +7,36 @@ import {
   Image,
   TouchableOpacity,
   StyleSheet,
+  StatusBar,
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import {useAppNavigation} from '@src/hooks/userAppNavigation';
+import ScreenComponent from '@src/components/ScreenComponent';
 
 const HomeScreen = () => {
+  const {drawerNavigation} = useAppNavigation();
+
+  useEffect(() => {
+    console.log('Rendering !!!');
+  });
+
   return (
-    <View style={styles.container}>
+    <ScreenComponent contentStyle={styles.container}>
       {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity>
+      <View style={[styles.header, {marginTop: StatusBar.currentHeight || 0}]}>
+        <TouchableOpacity
+          onPress={() => {
+            drawerNavigation.openDrawer();
+          }}>
           <Ionicons name="menu" size={28} color="black" />
         </TouchableOpacity>
+
         <View style={styles.location}>
           <Text style={styles.locationText}>Current Location</Text>
           <Text style={styles.locationTitle}>New York, USA</Text>
         </View>
+
         <TouchableOpacity>
           <Ionicons name="notifications-outline" size={28} color="black" />
         </TouchableOpacity>
@@ -66,20 +80,7 @@ const HomeScreen = () => {
           <Text style={styles.eventLocation}>36 Guild Street London, UK</Text>
         </View>
       </ScrollView>
-
-      {/* Bottom Navigation */}
-      <View style={styles.bottomNav}>
-        <TouchableOpacity>
-          <Ionicons name="compass-outline" size={28} color="gray" />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.addButton}>
-          <Ionicons name="add" size={28} color="white" />
-        </TouchableOpacity>
-        <TouchableOpacity>
-          <Ionicons name="person-outline" size={28} color="gray" />
-        </TouchableOpacity>
-      </View>
-    </View>
+    </ScreenComponent>
   );
 };
 
@@ -88,14 +89,17 @@ export default HomeScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    width: '100%',
     backgroundColor: '#ffffff',
     padding: 16,
+    borderWidth: 0,
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     marginTop: 10,
+    width: '100%',
   },
   location: {
     alignItems: 'center',

@@ -20,15 +20,22 @@ import {useLoginForm} from '@src/hooks/useLoginForm';
 import {CustomPasswordInputComponent} from '@src/components/PasswordInputComponent';
 import {useRegisterForm} from '@src/hooks/useRegisterForm';
 import {sendEmail} from '@src/services/authService';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {useAppNavigation} from '@src/hooks/userAppNavigation';
 
-type ResetPasswordScreenProp = {
-  isEmailVerified?: boolean;
-};
-
-export const ResetPasswordScreen: React.FC<ResetPasswordScreenProp> = ({
-  isEmailVerified = false,
-}): React.JSX.Element => {
+export const ResetPasswordScreen = (): React.JSX.Element => {
   const {emailField, passwordField, repasswordField} = useRegisterForm();
+  const {authNavigation} = useAppNavigation();
+
+  const [isEmailVerified, setEmailVerified] = useState<boolean>(false);
+
+  const handleSendEmailRequest = async () => {
+    const response = await sendEmail(emailField.value);
+
+    if (response.status === 200) {
+      setEmailVerified(true);
+    }
+  };
 
   return (
     <CustomContainerComponent
@@ -41,7 +48,7 @@ export const ResetPasswordScreen: React.FC<ResetPasswordScreenProp> = ({
         height: '100%',
         paddingTop: 65,
       }}>
-      <HeaderComponent />
+      <HeaderComponent navigation={authNavigation} />
       <CustomContainerComponent
         customStyle={{
           display: 'flex',
@@ -66,12 +73,7 @@ export const ResetPasswordScreen: React.FC<ResetPasswordScreenProp> = ({
           </CustomContainerComponent>
         )}
 
-        <ArrowButton
-          label="SEND"
-          onPress={() => {
-            sendEmail(emailField.value);
-          }}
-        />
+        <ArrowButton label="SEND" onPress={async () => {}} />
       </CustomContainerComponent>
     </CustomContainerComponent>
   );

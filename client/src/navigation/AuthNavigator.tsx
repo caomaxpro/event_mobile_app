@@ -1,5 +1,6 @@
 import React, {useEffect, useRef, useState} from 'react';
-import {createStackNavigator} from '@react-navigation/stack';
+// import {createStackNavigator} from '@react-navigation/stack';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {
   NavigationContainer,
   NavigationContainerRef,
@@ -10,38 +11,44 @@ import LoginScreen from '@src/screens/auth/LoginScreen';
 import RegisterScreen from '@src/screens/auth/RegisterScreen';
 import {ResetPasswordScreen} from '@src/screens/auth/ResetPasswordScreen';
 import VerificationScreen from '@src/screens/auth/VerificationScreen';
-import {loadState} from '@src/utils/storageUtils';
-import HomeScreen from '@src/screens/home/HomeScreen';
+import {loadState, saveState} from '@src/utils/storageUtils';
+import HomeScreen from '@src/screens/bottom_tab/HomeScreen';
+import TabNavigator from './TabNavigator';
+import DrawerNavigator from './DrawerNavigator';
 
-export type RootStackParamList = {
-  HomeScreen: undefined;
-  OnboardingScreen: undefined;
+export type AuthStackParamList = {
   LoginScreen: undefined;
+  OnboardingScreen: undefined;
   RegisterScreen: undefined;
+  ResetPasswordScreen: undefined;
   VerificationScreen: undefined;
-  ResetPasswordScreen: {isEmailVerified: boolean};
+  DrawerNavigator: undefined;
 };
 
-const RootStack = createStackNavigator<RootStackParamList>();
+const AuthStack = createNativeStackNavigator<AuthStackParamList>();
 
-export default function AuthNavigator() {
+export default function AuthNavigator({navigation}: any) {
+  //   const [isViewBoarding, setViewBoarding] = useState<boolean>(false);
+
   // fetch user data
-  const [user, setUser] = useState<any>();
+  //   useEffect(() => {
+  //     // load state
 
-  useEffect(() => {
-    // load state
-    const _loadState = async () => {
-      const state = await loadState();
-      const user = state?.user;
+  //     const _loadState = async () => {
+  //       const state = await loadState();
 
-      if (user) {
-        setUser(_loadState);
-      }
-    };
+  //       //   if (!state.user.onboarding_view) {
+  //       //     await saveState({
+  //       //       ...state,
+  //       //       user: {...state.user, onboarding_view: true},
+  //       //     });
+  //       //   }
 
-    _loadState();
-  }, []);
+  //       setViewBoarding(state.user.onboarding_view);
+  //     };
 
+  //     _loadState();
+  //   }, []);
   // const Stack = createNativeStack
 
   //   const navigationRef =
@@ -73,22 +80,21 @@ export default function AuthNavigator() {
   //   }, []);
 
   return (
-    <RootStack.Navigator
-      initialRouteName={user ? 'HomeScreen' : 'LoginScreen'}
-      screenOptions={{headerShown: true}}>
-      <RootStack.Screen name="HomeScreen" component={HomeScreen} />
-      <RootStack.Screen name="LoginScreen" component={LoginScreen} />
-      <RootStack.Screen name="OnboardingScreen" component={OnboardingScreen} />
-      <RootStack.Screen name="RegisterScreen" component={RegisterScreen} />
-      <RootStack.Screen
+    <AuthStack.Navigator
+      initialRouteName={'LoginScreen'}
+      screenOptions={{headerShown: false}}>
+      <AuthStack.Screen name="LoginScreen" component={LoginScreen} />
+      <AuthStack.Screen name="OnboardingScreen" component={OnboardingScreen} />
+      <AuthStack.Screen name="RegisterScreen" component={RegisterScreen} />
+      <AuthStack.Screen
         name="ResetPasswordScreen"
         component={ResetPasswordScreen}
-        initialParams={{isEmailVerified: false}}
       />
-      <RootStack.Screen
+      <AuthStack.Screen
         name="VerificationScreen"
         component={VerificationScreen}
       />
-    </RootStack.Navigator>
+      <AuthStack.Screen name="DrawerNavigator" component={DrawerNavigator} />
+    </AuthStack.Navigator>
   );
 }

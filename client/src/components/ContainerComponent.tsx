@@ -7,6 +7,7 @@ import {
   View,
   ImageSourcePropType,
   SafeAreaView,
+  StatusBar,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {useSettingContext} from '@src/context/SettingContext';
@@ -22,6 +23,7 @@ type ScreenComponentProps = ViewProps & {
   bgImage?: number | null;
   displayBackgroundImage?: boolean;
   animatedStyle?: any;
+  isStatusBar?: boolean;
 };
 
 const AnimatedSafeAreaView = Animated.createAnimatedComponent(SafeAreaView);
@@ -33,6 +35,7 @@ export default function CustomContainerComponent({
   bgImage = null,
   displayBackgroundImage = false,
   animatedStyle,
+  isStatusBar = false,
   ...props
 }: ScreenComponentProps) {
   const {state} = useSettingContext();
@@ -45,7 +48,10 @@ export default function CustomContainerComponent({
     <AnimatedSafeAreaView
       style={[
         styles.default_container,
-        {borderColor: theme.textOnBG},
+        {
+          borderColor: theme.textOnBG,
+          marginTop: isStatusBar ? StatusBar.currentHeight || 0 : 0,
+        },
         customStyle,
         animatedContainerStyle,
       ]}

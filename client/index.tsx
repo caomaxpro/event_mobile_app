@@ -16,6 +16,7 @@ import {
   configureReanimatedLogger,
   ReanimatedLogLevel,
 } from 'react-native-reanimated';
+// import {AuthProvider} from '@src/context/AuthContext';
 
 configureReanimatedLogger({
   level: ReanimatedLogLevel.warn,

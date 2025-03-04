@@ -5,6 +5,7 @@ import CustomContainerComponent from '@src/components/ContainerComponent';
 import CustomText from '@src/components/CustomText';
 import HeaderComponent from '@src/components/HeaderComponent';
 import {useSettingContext} from '@src/context/SettingContext';
+import {useAppNavigation} from '@src/hooks/userAppNavigation';
 import {log} from '@src/utils/logUtils';
 import {loadState} from '@src/utils/storageUtils';
 import React, {useState, useRef, useEffect} from 'react';
@@ -16,19 +17,20 @@ import {
   StyleSheet,
 } from 'react-native';
 
-import {RootStackParamList} from '@src/navigation/AuthNavigation';
-import {StackNavigationProp} from '@react-navigation/stack';
+// import {RootStackParamList} from '@src/navigation/AuthNavigator';
+// import {StackNavigationProp} from '@react-navigation/stack';
 
-type NavigationProp = StackNavigationProp<RootStackParamList>;
+// type NavigationProp = StackNavigationProp<RootStackParamList>;
 
-const VerificationScreen: React.FC = () => {
+const VerificationScreen = ({navigation}: any): React.JSX.Element => {
   const [curIndex, setCurIndex] = useState<number>(0);
   const [code, setCode] = useState(['', '', '', '']);
   const [timer, setTimer] = useState(1000);
 
-  const navigation = useNavigation<NavigationProp>();
+  //   const navigation = useNavigation<NavigationProp>();
 
   const {state} = useSettingContext();
+  const {authNavigation} = useAppNavigation();
 
   const inputRefs = useRef<Array<TextInput | null>>([null, null, null, null]);
 
@@ -78,7 +80,7 @@ const VerificationScreen: React.FC = () => {
     const state = await loadState();
 
     if (
-      Date.now() < (state.token.expiredAt ?? 0) &&
+      Date.now() < (state.token.passcodeExpiredAt ?? 0) &&
       passcode === state.token.passcode
     ) {
       navigation.navigate('ResetPasswordScreen', {isEmailVerified: true});
@@ -105,7 +107,7 @@ const VerificationScreen: React.FC = () => {
         height: '100%',
         paddingTop: 65,
       }}>
-      <HeaderComponent />
+      <HeaderComponent navigation={authNavigation} />
       <CustomContainerComponent
         customStyle={{
           display: 'flex',

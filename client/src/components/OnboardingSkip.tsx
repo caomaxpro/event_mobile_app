@@ -11,15 +11,10 @@ import {useNavigation} from '@react-navigation/native';
 {
   /* <Icon name="" />; */
 }
-
-import {AuthStackParamList} from '@src/navigation/AuthNavigation';
-import {StackNavigationProp} from '@react-navigation/stack';
+// import {StackNavigationProp} from '@react-navigation/stack';
 import {SCREEN_WIDTH} from '@src/utils/appInfo';
 
-type NavigationType = StackNavigationProp<
-  AuthStackParamList,
-  'OnboardingScreen'
->;
+// type NavigationType = StackNavigationProp<AuthStackParamList>;
 
 type OnboardingSkipProps = {
   boardingIndex: number;
@@ -37,7 +32,7 @@ const OnboardingSkip: React.FC<OnboardingSkipProps> = ({
   const {state} = useSettingContext();
   const theme = state.theme;
 
-  const navigation = useNavigation<NavigationType>();
+  // const navigation = useNavigation();
 
   const dots = [0, 1, 2];
 

@@ -27,6 +27,7 @@ interface UserState {
   is_verified: boolean;
   subscription_plan: string;
   join_date: Date;
+  onboarding_view: boolean;
 }
 
 interface ThemeState {
@@ -51,7 +52,7 @@ interface TextState {
 interface JWTokenState {
   jwt?: string;
   passcode?: string;
-  expiredAt?: number;
+  passcodeExpiredAt?: number;
 }
 
 export interface SettingState {
@@ -71,6 +72,7 @@ export const initialState: SettingState = {
     is_verified: false,
     subscription_plan: '',
     join_date: new Date(),
+    onboarding_view: false,
   },
   theme: {
     bgImage: require('@src/assets/images/splash_screen.png'),
@@ -92,16 +94,18 @@ export const initialState: SettingState = {
   token: {
     jwt: '',
     passcode: '0000',
-    expiredAt: Infinity,
+    passcodeExpiredAt: Infinity,
   },
 };
 
 const SettingContext = createContext<{
   state: SettingState;
   setState: React.Dispatch<React.SetStateAction<SettingState>>;
+  saveStateAfterAction?: () => Promise<void>;
 }>({
   state: initialState,
   setState: () => {},
+  saveStateAfterAction: async () => {},
 });
 
 // Hàm lưu trạng thái vào EncryptedStorage
@@ -115,6 +119,11 @@ interface SettingProviderProps {
 export const SettingProvider = ({children}: SettingProviderProps) => {
   const [state, setState] = useState<SettingState>(initialState);
   const hasLoadedState = useRef(false);
+
+  // detect changes from state => and log info
+  useEffect(() => {
+    console.log(state);
+  }, [state]);
 
   // Hàm khôi phục trạng thái khi ứng dụng mở
   useEffect(() => {
@@ -138,7 +147,13 @@ export const SettingProvider = ({children}: SettingProviderProps) => {
     };
   }, []);
 
-  const value = {state, setState};
+  const saveStateAfterAction = async () => {
+    console.log('[Setting Context]', state);
+
+    await saveState(state);
+  };
+
+  const value = {state, setState, saveStateAfterAction};
 
   return (
     <SettingContext.Provider value={value}>{children}</SettingContext.Provider>

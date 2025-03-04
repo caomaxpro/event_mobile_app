@@ -15,11 +15,10 @@ import React, {useEffect} from 'react';
 import {SCREEN_HEIGHT, SCREEN_WIDTH} from '@src/utils/appInfo';
 import {useSettingContext} from '@src/context/SettingContext';
 
-type ScreenComponentProps = ScrollViewProps & {
+type ScreenComponentProps = ViewProps & {
   children?: React.ReactNode;
   customStyle?: StyleProp<ViewStyle>;
   contentStyle?: StyleProp<ViewStyle>;
-  bgImage?: number;
   displayBackgroundImage?: boolean;
   scrollEnabled?: boolean; // Thêm prop để kiểm soát việc cuộn
 };
@@ -28,7 +27,6 @@ export default function ScreenComponent({
   children,
   customStyle,
   contentStyle,
-  bgImage,
   displayBackgroundImage = true,
   scrollEnabled = true, // Mặc định là cuộn được
   ...props
@@ -36,12 +34,12 @@ export default function ScreenComponent({
   const {state} = useSettingContext();
   const theme = state.theme;
 
-  const backgroundImage = bgImage ?? theme.bgImage;
+  const backgroundImage = theme.bgImage;
 
   return (
-    <ScrollView
+    <View
       {...props}
-      contentContainerStyle={[
+      style={[
         styles.default_container,
         {
           backgroundColor: theme.background,
@@ -52,14 +50,14 @@ export default function ScreenComponent({
       {displayBackgroundImage ? (
         <ImageBackground
           source={backgroundImage}
-          resizeMode="cover"
+          resizeMode="contain"
           style={styles.backgroundImage}>
           <View style={[styles.content, contentStyle]}>{children}</View>
         </ImageBackground>
       ) : (
         <View style={[styles.content, contentStyle]}>{children}</View>
       )}
-    </ScrollView>
+    </View>
   );
 }
 

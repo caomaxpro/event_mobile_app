@@ -16,7 +16,7 @@ export function useRegisterForm() {
   const passwordField = usePasswordInput('')
   const repasswordField = useRepasswordInput('', passwordField.value)
 
-  const handleSubmit = () => {
+  const handleSubmit = async (): Promise<any> => {
       const data = {
           name: fullNameField.value,
           email: emailField.value,
@@ -24,7 +24,7 @@ export function useRegisterForm() {
           repassword: repasswordField.value,
       }
 
-      registerUser(data)
+      return await registerUser(data)
   };
     
   return {fullNameField, emailField, passwordField, repasswordField, handleSubmit};

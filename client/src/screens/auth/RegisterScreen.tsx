@@ -1,7 +1,7 @@
 // LoginScreen.tsx
 import React, {useState} from 'react';
 import {View, Text, Button, StyleSheet} from 'react-native';
-import {Header, StackScreenProps} from '@react-navigation/stack';
+// import {Header, StackScreenProps} from '@react-navigation/stack';
 import ScreenComponent from '@src/components/ScreenComponent';
 import {CustomTextInputComponent} from '@src/components/CustomInputField';
 import {useEmailInput, usePasswordInput} from '@src/hooks/useInputField';
@@ -20,6 +20,7 @@ import ArrowButton from '@src/components/ArrowButton';
 import {useRegisterForm} from '@src/hooks/useRegisterForm';
 import {CustomPasswordInputComponent} from '@src/components/PasswordInputComponent';
 import {CustomEmailInputComponent} from '@src/components/EmailInputComponent';
+import {useAppNavigation} from '@src/hooks/userAppNavigation';
 // import {AuthStackParamList} from '@src/navigation/AuthNavigation';
 
 // type LoginScreenProps = StackScreenProps<AuthStackParamList, 'LoginScreen'> & {
@@ -38,12 +39,13 @@ export default function RegisterScreen() {
   const {state} = useSettingContext();
 
   const [isRememberUser, setRememberUser] = useState<boolean>(false);
+  const {authNavigation} = useAppNavigation();
 
   return (
     <ScreenComponent
       //   contentStyle={{justifyContent: 'space-evenly'}}
       displayBackgroundImage={true}>
-      <HeaderComponent />
+      <HeaderComponent navigation={authNavigation} />
 
       <CustomText
         textWeight="medium"
