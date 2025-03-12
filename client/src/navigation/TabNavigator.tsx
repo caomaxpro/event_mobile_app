@@ -5,6 +5,7 @@ import HomeScreen from '@src/screens/bottom_tab/HomeScreen';
 import EventScreen from '@src/screens/bottom_tab/EventScreen';
 import MapScreen from '@src/screens/bottom_tab/MapScreen';
 import ProfileScreen from '@src/screens/bottom_tab/ProfileScreen';
+import BottomBarComponent from '@src/components/bottom_bar_component/BottomBarComponent';
 
 export type TabParamList = {
   HomeScreen: undefined;
@@ -17,7 +18,9 @@ const Tab = createBottomTabNavigator<TabParamList>();
 
 const TabNavigator = () => {
   return (
-    <Tab.Navigator screenOptions={{headerShown: false}}>
+    <Tab.Navigator
+      tabBar={() => <></>}
+      screenOptions={{headerShown: false, tabBarStyle: {display: 'none'}}}>
       <Tab.Screen name="HomeScreen" component={HomeScreen} />
       <Tab.Screen name="EventScreen" component={EventScreen} />
       <Tab.Screen name="MapScreen" component={MapScreen} />

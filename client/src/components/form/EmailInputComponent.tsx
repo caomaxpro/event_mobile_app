@@ -1,7 +1,7 @@
 import {StyleSheet, Text, View} from 'react-native';
 import React from 'react';
 import {CustomTextInputComponent} from './CustomInputField';
-import CustomIcon from './CustomIcon';
+import CustomIcon from '../native_components/CustomIcon';
 import {useSettingContext} from '@src/context/SettingContext';
 
 type EmailInputComponentProps = {

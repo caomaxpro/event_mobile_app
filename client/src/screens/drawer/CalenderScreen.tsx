@@ -1,6 +1,6 @@
 import {StyleSheet, Text, View} from 'react-native';
 import React from 'react';
-import ScreenComponent from '@src/components/ScreenComponent';
+import {ScreenComponent} from '@src/components/native_components/ScreenComponent';
 import HeaderComponent from '@src/components/HeaderComponent';
 import {useAppNavigation} from '@src/hooks/userAppNavigation';
 

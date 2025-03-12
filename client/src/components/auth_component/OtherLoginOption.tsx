@@ -9,10 +9,10 @@ import {
   Image,
   GestureResponderEvent,
 } from 'react-native';
-import CustomContainerComponent from './ContainerComponent';
-import CustomButton from './ButtonComponent';
+import CustomContainerComponent from '../native_components/ContainerComponent';
+import CustomButton from '../native_components/ButtonComponent';
 import {useSettingContext} from '@src/context/SettingContext';
-import CustomText from './CustomText';
+import CustomText from '../native_components/CustomText';
 import {useNavigation} from '@react-navigation/native';
 
 export const OtherLoginOptionComponent: React.FC = () => {

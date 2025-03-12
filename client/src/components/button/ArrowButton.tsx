@@ -1,8 +1,8 @@
 import {StyleSheet, Text, View} from 'react-native';
 import React from 'react';
-import CustomButton from './ButtonComponent';
+import CustomButton from './native_components/ButtonComponent';
 import {CircularRightArrow} from '@src/assets/svg/CircularRightArrow';
-import CustomText from './CustomText';
+import CustomText from './native_components/CustomText';
 import {useSettingContext} from '@src/context/SettingContext';
 
 type ArrowButtonProps = {

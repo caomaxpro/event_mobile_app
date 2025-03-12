@@ -19,7 +19,7 @@ import {
 import {defaultStyle} from '@src/styles/defaultStyles';
 import SplashScreen from '@src/screens/SplashScreen';
 import AuthNavigator from '@src/navigation/AuthNavigator';
-import ScreenComponent from '@src/components/ScreenComponent';
+import {ScreenComponent} from '@src/components/native_components/ScreenComponent';
 import OnboardingScreen from '@src/screens/onboarding/OnboardingScreen';
 import {NavigationContainer} from '@react-navigation/native';
 import MainTabNavigator from '@src/navigation/MainNavigator';
@@ -32,6 +32,7 @@ import {loadState} from '@src/utils/storageUtils';
 import MainNavigator from '@src/navigation/MainNavigator';
 import TabNavigator from '@src/navigation/TabNavigator';
 import AppRouters from '@src/navigation/AppRouter';
+import {SafeAreaProvider, SafeAreaView} from 'react-native-safe-area-context';
 
 type user = {
   email: string;
@@ -47,17 +48,19 @@ const user1: user = {
 
 function App(): React.JSX.Element {
   return (
-    <View style={{flex: 1}}>
+    <SafeAreaProvider>
       <StatusBar
         animated={true}
         backgroundColor="transparent"
         translucent={true}
       />
 
-      <NavigationContainer>
-        <AppRouters />
-      </NavigationContainer>
-    </View>
+      <SafeAreaView style={{flex: 1}} edges={['left', 'right']}>
+        <NavigationContainer>
+          <AppRouters />
+        </NavigationContainer>
+      </SafeAreaView>
+    </SafeAreaProvider>
 
     // <ScreenComponent
     //   customStyle={{flex: 1, width: '100%', height: '100%'}}

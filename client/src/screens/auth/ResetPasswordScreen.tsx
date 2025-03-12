@@ -1,9 +1,9 @@
-import ArrowButton from '@src/components/ArrowButton';
-import CustomButton from '@src/components/ButtonComponent';
-import CustomContainerComponent from '@src/components/ContainerComponent';
-import {CustomTextInputComponent} from '@src/components/CustomInputField';
-import {CustomEmailInputComponent} from '@src/components/EmailInputComponent';
-import CustomText from '@src/components/CustomText';
+import ArrowButton from '@src/components/button/ArrowButton';
+import CustomButton from '@src/components/native_components/ButtonComponent';
+import CustomContainerComponent from '@src/components/native_components/ContainerComponent';
+import {CustomTextInputComponent} from '@src/components/form/CustomInputField';
+import {CustomEmailInputComponent} from '@src/components/form/EmailInputComponent';
+import CustomText from '@src/components/native_components/CustomText';
 import HeaderComponent from '@src/components/HeaderComponent';
 import {useSettingContext} from '@src/context/SettingContext';
 import {useEmailInput} from '@src/hooks/useInputField';
@@ -17,7 +17,7 @@ import {
   StyleSheet,
 } from 'react-native';
 import {useLoginForm} from '@src/hooks/useLoginForm';
-import {CustomPasswordInputComponent} from '@src/components/PasswordInputComponent';
+import {CustomPasswordInputComponent} from '@src/components/form/PasswordInputComponent';
 import {useRegisterForm} from '@src/hooks/useRegisterForm';
 import {sendEmail} from '@src/services/authService';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';

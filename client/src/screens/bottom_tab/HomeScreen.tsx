@@ -1,4 +1,5 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
+import {useDrawerStatus} from '@react-navigation/drawer';
 import {
   View,
   Text,
@@ -12,75 +13,199 @@ import {
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import {useAppNavigation} from '@src/hooks/userAppNavigation';
-import ScreenComponent from '@src/components/ScreenComponent';
+import Animated, {useAnimatedStyle, withTiming} from 'react-native-reanimated';
+import {ScreenComponent} from '@src/components/native_components/ScreenComponent';
+import {CustomDrawerContent} from '@src/components/native_components/DrawerComponent';
+import CustomContainerComponent from '@src/components/native_components/ContainerComponent';
+import {AnimatedCustomContainerComponent} from '@src/components/native_components/ContainerComponent';
+import {AnimatedScreenComponent} from '@src/components/native_components/ScreenComponent';
+import {SCREEN_HEIGHT, SCREEN_WIDTH} from '@src/utils/appInfo';
+import {MenuIcon} from '@src/assets/svg/MenuIcon';
+import CustomButton from '@src/components/native_components/ButtonComponent';
+import {BellIcon} from '@src/assets/svg/BellIcon';
+import SearchBarComponent from '@src/components/form/SearchBarComponent';
+import EventChoiceOptions from '@src/components/home_screen/EventChoiceOptions';
+import CustomText from '@src/components/native_components/CustomText';
+import {useSettingContext} from '@src/context/SettingContext';
+import CustomIcon from '@src/components/native_components/CustomIcon';
+import CustomHorizontalScrollView from '@src/components/native_components/HorizontalScrollView';
+import {hs, vs, ms} from '@src/utils/rNResponsive';
+import UpcomingEventItem from '@src/components/home_screen/UpcomingEventItem';
+import {Events} from '@src/assets/data/event';
+import InviteCard from '@src/components/home_screen/InviteCard';
+import EventSliderComponent from '@src/components/home_screen/EventSliderComponent';
+import CustomVerticleScrollView from '@src/components/native_components/CustomVerticleScrollView';
+import BottomBarComponent from '@src/components/bottom_bar_component/BottomBarComponent';
+import HomeBodyComponent from '@src/components/home_screen/HomeBodyComponent';
+import {useSelector} from 'react-redux';
+import {RootState} from '@src/redux/store';
+
+const screenHeightWhenOpened = SCREEN_HEIGHT * 0.95;
 
 const HomeScreen = () => {
   const {drawerNavigation} = useAppNavigation();
+  const drawerStatus = useDrawerStatus();
+
+  const {isDrawerOpened, isDetailsShowed} = useSelector(
+    (state: RootState) => state.app,
+  );
+
+  const {state} = useSettingContext();
 
   useEffect(() => {
     console.log('Rendering !!!');
   });
 
+  const animatedScreenComponentStyle = useAnimatedStyle(() => {
+    return {
+      position: 'absolute',
+      top: isDrawerOpened
+        ? withTiming(SCREEN_HEIGHT - screenHeightWhenOpened, {duration: 500})
+        : withTiming(0, {duration: 500}),
+      left: 0,
+      width: SCREEN_WIDTH,
+      //   right: isDrawerOpened ? 0 : 0,
+      height: isDrawerOpened
+        ? withTiming(screenHeightWhenOpened, {
+            duration: 500,
+          })
+        : withTiming(SCREEN_HEIGHT + 40, {
+            duration: 500,
+          }),
+      zIndex: 3,
+      transform: [
+        {
+          translateX: isDrawerOpened
+            ? withTiming('75%', {duration: 500})
+            : withTiming('0%', {duration: 500}),
+        },
+        // {
+        //   scaleY: isDrawerOpened
+        //     ? withTiming(0.9, {duration: 500})
+        //     : withTiming(1, {duration: 500}),
+        // },
+      ],
+
+      borderRadius: isDrawerOpened
+        ? withTiming(40, {duration: 500})
+        : withTiming(0, {duration: 500}),
+
+      overflow: 'hidden',
+    };
+  });
+
+  const animatedContainer1 = useAnimatedStyle(() => {
+    return {
+      left: isDrawerOpened
+        ? withTiming('65%', {duration: 500})
+        : withTiming('0%', {duration: 500}),
+
+      height: isDrawerOpened
+        ? withTiming((SCREEN_HEIGHT + 60) * 0.95, {duration: 500})
+        : withTiming((SCREEN_HEIGHT + 60) * 1, {duration: 500}),
+
+      borderRadius: isDrawerOpened
+        ? withTiming(40, {duration: 500})
+        : withTiming(0, {duration: 500}),
+
+      backgroundColor: 'rgba(188, 188, 188, 0.25)',
+      opacity: isDrawerOpened ? 1 : 0,
+    };
+  });
+
+  const animatedContainer2 = useAnimatedStyle(() => {
+    return {
+      left: isDrawerOpened
+        ? withTiming('70%', {duration: 500})
+        : withTiming('0%', {duration: 500}),
+
+      height: isDrawerOpened
+        ? withTiming((SCREEN_HEIGHT + 60) * 0.95, {duration: 500})
+        : withTiming((SCREEN_HEIGHT + 60) * 1, {duration: 500}),
+
+      borderRadius: isDrawerOpened
+        ? withTiming(40, {duration: 500})
+        : withTiming(0, {duration: 500}),
+
+      backgroundColor: 'rgba(188, 188, 188, 0.25)',
+      opacity: isDrawerOpened ? 1 : 0,
+    };
+  });
+
   return (
-    <ScreenComponent contentStyle={styles.container}>
-      {/* Header */}
-      <View style={[styles.header, {marginTop: StatusBar.currentHeight || 0}]}>
-        <TouchableOpacity
-          onPress={() => {
-            drawerNavigation.openDrawer();
-          }}>
-          <Ionicons name="menu" size={28} color="black" />
-        </TouchableOpacity>
+    <AnimatedScreenComponent
+      customStyle={{
+        justifyContent: 'flex-start',
+        borderWidth: 0,
+        height: hs(SCREEN_HEIGHT),
+        overflow: 'hidden',
+        backgroundColor: 'green',
+      }}
+      contentStyle={styles.container}>
+      <CustomDrawerContent isDrawerOpened={isDrawerOpened} />
 
-        <View style={styles.location}>
-          <Text style={styles.locationText}>Current Location</Text>
-          <Text style={styles.locationTitle}>New York, USA</Text>
-        </View>
+      {/* <AnimatedCustomContainerComponent
+        // style={[animatedContainer1]}
+        customStyle={[
+          {
+            // borderWidth: 2,
+            zIndex: 0,
+            height: '100%',
+            width: SCREEN_WIDTH,
+            backgroundColor: 'blue',
+            position: 'absolute',
+            top: 0,
+            //   left: isDrawerOpened ? withTiming('65%', {duration: 500}) : '0%',
+          },
+          animatedContainer1,
+        ]}
+      /> */}
 
-        <TouchableOpacity>
-          <Ionicons name="notifications-outline" size={28} color="black" />
-        </TouchableOpacity>
-      </View>
+      {/* 
+      <AnimatedCustomContainerComponent
+        // style={[animatedContainer2]}
+        customStyle={[
+          {
+            zIndex: 0,
+            height: '100%',
+            width: SCREEN_WIDTH,
+            backgroundColor: 'red',
+            position: 'absolute',
+            top: 0,
+            left: '70%',
+          },
+          animatedContainer2,
+        ]}
+      /> */}
 
-      {/* Search Bar */}
-      <View style={styles.searchBar}>
-        <FontAwesome name="search" size={20} color="gray" style={styles.icon} />
-        <TextInput placeholder="Search..." style={styles.input} />
-        <TouchableOpacity>
-          <Ionicons name="options-outline" size={20} color="gray" />
-        </TouchableOpacity>
-      </View>
+      {/* <View style={{width: 100, height: 100, backgroundColor: 'red'}}></View> */}
 
-      {/* Categories */}
-      <View style={styles.categories}>
-        <TouchableOpacity
-          style={[styles.categoryButton, {backgroundColor: '#ff4d4d'}]}>
-          <Text style={styles.categoryText}>Sports</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.categoryButton, {backgroundColor: '#ffaa00'}]}>
-          <Text style={styles.categoryText}>Music</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.categoryButton, {backgroundColor: '#33cc33'}]}>
-          <Text style={styles.categoryText}>Food</Text>
-        </TouchableOpacity>
-      </View>
+      <AnimatedCustomContainerComponent
+        // style={[animatedScreenComponentStyle]}
+        customStyle={[
+          {
+            width: '100%',
+            height: hs(SCREEN_HEIGHT),
+            backgroundColor: 'white',
+          },
+          animatedScreenComponentStyle,
+        ]}
+        contentStyle={{
+          flexDirection: 'column',
+          borderWidth: 0,
+          height: '100%',
+          justifyContent: 'flex-start',
+          //   backgroundColor: 'green',
+        }}>
+        <HomeBodyComponent />
 
-      {/* Upcoming Events */}
-      <ScrollView style={styles.scrollContainer}>
-        <Text style={styles.sectionTitle}>Upcoming Events</Text>
+        <BottomBarComponent />
 
-        <View style={styles.eventCard}>
-          <Image
-            source={{uri: 'https://via.placeholder.com/150'}}
-            style={styles.eventImage}
-          />
-          <Text style={styles.eventTitle}>International Band Music</Text>
-          <Text style={styles.eventLocation}>36 Guild Street London, UK</Text>
-        </View>
-      </ScrollView>
-    </ScreenComponent>
+        {/* <CustomHorizontalScrollView>
+
+        </CustomHorizontalScrollView> */}
+      </AnimatedCustomContainerComponent>
+    </AnimatedScreenComponent>
   );
 };
 
@@ -88,38 +213,18 @@ export default HomeScreen;
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    display: 'flex',
+    flexDirection: 'row',
     width: '100%',
     backgroundColor: '#ffffff',
-    padding: 16,
+    // backgroundColor: 'blue',
+    padding: 0,
+    // overflow: 'scroll',
+    // justifyContent: 'flex-start',
+    // alignItems: 'center',
+    // alignContent: 'center',
     borderWidth: 0,
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginTop: 10,
-    width: '100%',
-  },
-  location: {
-    alignItems: 'center',
-  },
-  locationText: {
-    color: '#666',
-    fontSize: 12,
-  },
-  locationTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-  searchBar: {
-    flexDirection: 'row',
-    backgroundColor: '#f2f2f2',
-    borderRadius: 30,
-    paddingVertical: 10,
-    paddingHorizontal: 15,
-    marginTop: 10,
-    alignItems: 'center',
+    overflow: 'hidden',
   },
   icon: {
     marginRight: 10,

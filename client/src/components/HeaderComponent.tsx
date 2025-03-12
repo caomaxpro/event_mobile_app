@@ -1,10 +1,10 @@
 import {StatusBar, StyleSheet, Text, View} from 'react-native';
 import React from 'react';
-import CustomButton from './ButtonComponent';
-import CustomContainerComponent from './ContainerComponent';
-import CustomIcon from './CustomIcon';
+import CustomButton from './native_components/ButtonComponent';
+import CustomContainerComponent from './native_components/ContainerComponent';
+import CustomIcon from './native_components/CustomIcon';
 import {useAppNavigation} from '@src/hooks/userAppNavigation';
-import CustomText from './CustomText';
+import CustomText from './native_components/CustomText';
 
 type HeaderComponentProp = {
   title?: string;
@@ -33,7 +33,7 @@ const HeaderComponent: React.FC<HeaderComponentProp> = ({
         width: '100%',
         height: 60,
         position: 'absolute',
-        top: StatusBar?.currentHeight || 0,
+        // top: StatusBar?.currentHeight || 0,
       }}>
       <CustomButton
         customStyle={{

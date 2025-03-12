@@ -2,26 +2,26 @@
 import React, {useContext, useEffect, useState} from 'react';
 import {View, Text, Button, StyleSheet} from 'react-native';
 // import {StackScreenProps} from '@react-navigation/stack';
-import ScreenComponent from '@src/components/ScreenComponent';
+import {ScreenComponent} from '@src/components/native_components/ScreenComponent';
 import {
   CustomTextInputComponent,
   EmailInputComponent,
-} from '@src/components/CustomInputField';
+} from '@src/components/form/CustomInputField';
 import {useEmailInput, usePasswordInput} from '@src/hooks/useInputField';
 import {Icon} from '@src/components/Icon';
-import CustomIcon from '@src/components/CustomIcon';
-import CustomButton from '@src/components/ButtonComponent';
+import CustomIcon from '@src/components/native_components/CustomIcon';
+import CustomButton from '@src/components/native_components/ButtonComponent';
 import {useSettingContext} from '@src/context/SettingContext';
-import CustomContainerComponent from '@src/components/ContainerComponent';
-import CustomToggle from '@src/components/CustomToggle';
-import CustomText from '@src/components/CustomText';
+import CustomContainerComponent from '@src/components/native_components/ContainerComponent';
+import CustomToggle from '@src/components/native_components/CustomToggle';
+import CustomText from '@src/components/native_components/CustomText';
 import {EventHubLogo} from '@src/assets/svg/EventHub';
-import {OtherLoginOptionComponent} from '@src/components/OtherLoginOption';
+import {OtherLoginOptionComponent} from '@src/components/auth_component/OtherLoginOption';
 import {CircularRightArrow} from '@src/assets/svg/CircularRightArrow';
-import ArrowButton from '@src/components/ArrowButton';
+import ArrowButton from '@src/components/button/ArrowButton';
 import {useLoginForm} from '@src/hooks/useLoginForm';
-import {CustomPasswordInputComponent} from '@src/components/PasswordInputComponent';
-import {CustomEmailInputComponent} from '@src/components/EmailInputComponent';
+import {CustomPasswordInputComponent} from '@src/components/form/PasswordInputComponent';
+import {CustomEmailInputComponent} from '@src/components/form/EmailInputComponent';
 import {log} from '@src/utils/logUtils';
 // import {AuthContext, useAuthContext} from '@src/context/AuthContext';/
 // import {AuthStackParamList} from '@src/navigation/AuthNavigation';

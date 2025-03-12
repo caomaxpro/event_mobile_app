@@ -6,6 +6,7 @@ import React from 'react';
 import {AppRegistry} from 'react-native';
 import App from '@src/app/App';
 import {name as appName} from './app.json';
+import {Provider} from 'react-redux';
 
 // import store from '@src/redux/store';
 // import { Provider } from 'react-redux';
@@ -16,6 +17,7 @@ import {
   configureReanimatedLogger,
   ReanimatedLogLevel,
 } from 'react-native-reanimated';
+import store from '@src/redux/store';
 // import {AuthProvider} from '@src/context/AuthContext';
 
 configureReanimatedLogger({
@@ -24,11 +26,13 @@ configureReanimatedLogger({
 });
 
 const Root: React.FC = () => (
-  <GestureHandlerRootView>
-    <SettingProvider>
-      <App />
-    </SettingProvider>
-  </GestureHandlerRootView>
+  <Provider store={store}>
+    <GestureHandlerRootView style={{flex: 1}}>
+      <SettingProvider>
+        <App />
+      </SettingProvider>
+    </GestureHandlerRootView>
+  </Provider>
 );
 
 AppRegistry.registerComponent(appName, () => Root);

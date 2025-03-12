@@ -76,7 +76,7 @@ export const initialState: SettingState = {
   },
   theme: {
     bgImage: require('@src/assets/images/splash_screen.png'),
-    background: 'rgba(230, 230, 230, 1)',
+    background: '#FEFEFF',
     textOnBG: 'rgba(18, 13, 38, 1)',
     container: 'rgba(129, 129, 129, 1)',
     textOnContainer: 'rgba(255, 255, 255, 1)',

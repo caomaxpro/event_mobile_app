@@ -1,8 +1,8 @@
 import {StyleSheet, Text, View} from 'react-native';
 import React from 'react';
-import CustomContainerComponent from '@src/components/ContainerComponent';
+import CustomContainerComponent from '@src/components/native_components/ContainerComponent';
 import {SplashLogo} from '@src/assets/svg/SplashLogo';
-import ScreenComponent from '@src/components/ScreenComponent';
+import {ScreenComponent} from '@src/components/native_components/ScreenComponent';
 import {defaultStyle} from '@src/styles/defaultStyles';
 import {useSettingContext} from '@src/context/SettingContext';
 

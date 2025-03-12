@@ -1,10 +1,10 @@
 import {StyleSheet, Text, View} from 'react-native';
 import React, {useState} from 'react';
-import CustomContainerComponent from './ContainerComponent';
+import CustomContainerComponent from '../native_components/ContainerComponent';
 import CustomIcon from './CustomIcon';
-import CustomText from './CustomText';
+import CustomText from '../native_components/CustomText';
 import {useSettingContext} from '@src/context/SettingContext';
-import CustomButton from './ButtonComponent';
+import CustomButton from '../native_components/ButtonComponent';
 import {useNavigation} from '@react-navigation/native';
 // import {Icon} from 'react-native-vector-icons/';
 
