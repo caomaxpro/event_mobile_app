@@ -26,7 +26,7 @@ const CustomVerticleScrollView: React.FC<CustomScrollViewProps> = ({
         setHeight(event.nativeEvent.layout.height);
       }}
       contentContainerStyle={[{height: height}, contentContainerStyle]}
-      showsVerticalScrollIndicator={false} // Hide scroll indicator
+      showsVerticalScrollIndicator={true} // Hide scroll indicator
     >
       {children}
     </ScrollView>

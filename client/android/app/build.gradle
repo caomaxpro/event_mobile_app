@@ -119,4 +119,5 @@ dependencies {
     }
 
     implementation project(':react-native-vector-icons')
+    implementation("androidx.activity:activity:1.9.+")
 }

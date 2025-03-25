@@ -1,3 +1,4 @@
+import {useReduxSelector} from '@src/hooks/useReduxSelector';
 import React, {forwardRef} from 'react';
 import {
   ImageBackground,
@@ -9,7 +10,6 @@ import {
   SafeAreaView,
   StatusBar,
 } from 'react-native';
-import {useSettingContext} from '@src/context/SettingContext';
 import Animated from 'react-native-reanimated';
 // import {AnimatedView} from 'react-native-reanimated/lib/typescript/component/View';
 
@@ -39,13 +39,12 @@ const CustomContainerComponent = forwardRef<SafeAreaView, ScreenComponentProps>(
     },
     ref,
   ) => {
-    const {state} = useSettingContext();
-    const theme = state.theme;
+    const {theme} = useReduxSelector();
     const backgroundImage = bgImage ?? theme.bgImage;
 
     return (
       <AnimatedSafeAreaView
-        ref={ref} // Đặt ref ở đây để fix lỗi
+        ref={ref}
         style={[
           styles.default_container,
           {
@@ -82,7 +81,7 @@ export default CustomContainerComponent;
 
 const styles = StyleSheet.create({
   default_container: {
-    width: '100%',
+    flex: 1,
     padding: 0,
     overflow: 'scroll',
     // borderWidth: 3,

@@ -1,93 +1,117 @@
-import {useState} from 'react';
-import {View, Text, TextInput, StyleSheet, TextInputProps} from 'react-native';
-import * as validator from '@src/utils/validatorUtils';
-import {log} from '@src/utils/logUtils';
+// import {useState} from 'react';
+// import {View, Text, TextInput, StyleSheet, TextInputProps} from 'react-native';
+// import * as validator from '@src/utils/validatorUtils';
+// import {log} from '@src/utils/logUtils';
 
-interface UseInputFieldProps {
-  initialValue?: string | number;
-  validate?: (value: string) => string;
-}
+// interface UseInputFieldProps {
+//   title?: string;
+//   initialValue?: string | number | Date;
+//   validate?: (value: string) => string;
+// }
 
-export function useInput(
-  initialValue = '',
-  validate?: (value: string) => string,
-) {
-  const [value, setValue] = useState(initialValue);
-  const [error, setError] = useState('');
+// export function useInput(
+//   initialValue: string = '',
+//   validate?: (value: string) => string,
+// ) {
+//   const [value, setValue] = useState(initialValue);
+//   const [error, setError] = useState('');
 
-  const onTextChange = (text: string) => {
-    log('Input Value', text);
+//   const onTextChange = (text: string) => {
+//     log('Input Value', text);
 
-    setValue(text);
-    if (validate) setError(validate(text));
-  };
+//     setValue(text);
 
-  log('Error', error);
+//     if (validate) setError(validate(text));
+//   };
 
-  return {value, onTextChange, error};
-}
+//   log('Error', error);
 
-export const useTextInput = (
-  initialValue = '',
-  min = -Infinity,
-  max = Infinity,
-) => {
-  const validate = (val: string) => {
-    return validator.validateTextLength(val, min, max);
-  };
+//   return {value, onTextChange, error};
+// }
 
-  return useInput(initialValue, validate);
-};
+// export const useTextInput = (
+//   initialValue = '',
+//   min = -Infinity,
+//   max = Infinity,
+// ) => {
+//   const validate = (val: string) => {
+//     return validator.validateTextLength(val, min, max);
+//   };
 
-export function useNumberInput(
-  initialValue = '0',
-  min = -Infinity,
-  max = Infinity,
-  clamp = false,
-) {
-  const validate = (val: string) => {
-    return validator.validateNumber(val, min, max);
-  };
+//   return useInput(initialValue, validate);
+// };
 
-  const {value, onTextChange, error} = useInput(initialValue, validate);
+// export function useNumberInput(
+//   initialValue = '0',
+//   min = -Infinity,
+//   max = Infinity,
+//   clamp = false,
+// ) {
+//   const validate = (val: string) => {
+//     return validator.validateNumber(val, min, max);
+//   };
 
-  // Function to clamp values within range
-  const clampValue = (num: number) => Math.max(min, Math.min(num, max));
+//   const {value, onTextChange, error} = useInput(initialValue, validate);
 
-  const handleChangeText = (text: string) => {
-    let numValue = parseFloat(text);
+//   // Function to clamp values within range
+//   const clampValue = (num: number) => Math.max(min, Math.min(num, max));
 
-    if (!isNaN(numValue) && clamp) {
-      numValue = clampValue(numValue);
-      onTextChange(numValue.toString());
-    } else {
-      onTextChange(text);
-    }
-  };
+//   const handleChangeText = (text: string) => {
+//     let numValue = parseFloat(text);
 
-  return {
-    value,
-    onTextChange: handleChangeText,
-    error,
-  };
-}
+//     if (!isNaN(numValue) && clamp) {
+//       numValue = clampValue(numValue);
+//       onTextChange(numValue.toString());
+//     } else {
+//       onTextChange(text);
+//     }
+//   };
 
-export function useEmailInput(initialValue = '') {
-  return useInput(initialValue, validator.validateEmail);
-}
+//   return {
+//     value,
+//     onTextChange: handleChangeText,
+//     error,
+//   };
+// }
 
-export function usePasswordInput(initialValue = '', minLength = 8) {
-  const validate = (val: string) => {
-    return validator.validatePassword(val, minLength);
-  };
+// export function useEmailInput(initialValue = '') {
+//   return useInput(initialValue, validator.validateEmail);
+// }
 
-  return useInput(initialValue, validate);
-}
+// export function usePasswordInput(initialValue = '', minLength = 8) {
+//   const validate = (val: string) => {
+//     return validator.validatePassword(val, minLength);
+//   };
 
-export function useRepasswordInput(initialValue: string = '', password: string) {
-    const validate = (val: string) => {
-        return validator.validateRepassword(val, password)
-    }
+//   return useInput(initialValue, validate);
+// }
 
-    return useInput(initialValue, validate)
-}
+// export function useRepasswordInput(
+//   initialValue: string = '',
+//   password: string,
+// ) {
+//   const validate = (val: string) => {
+//     return validator.validateRepassword(val, password);
+//   };
+
+//   return useInput(initialValue, validate);
+// }
+
+// export function useDateInput(
+//   initialValue = new Date().toISOString(),
+//   startDate?: string,
+// ) {
+//   let validate;
+
+//   if (startDate) {
+//     validate = (val: string) => {
+//       return validator.validateEndDate(new Date(startDate), new Date(val));
+//     };
+//   } else {
+//     validate = (val: string) => {
+//       return validator.validateDate(new Date(val));
+//     };
+//   }
+
+//   return useInput(initialValue, validate);
+// }

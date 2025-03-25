@@ -24,19 +24,18 @@ import {MenuIcon} from '@src/assets/svg/MenuIcon';
 import CustomButton from '@src/components/native_components/ButtonComponent';
 import {BellIcon} from '@src/assets/svg/BellIcon';
 import SearchBarComponent from '@src/components/form/SearchBarComponent';
-import EventChoiceOptions from '@src/components/home_screen/EventChoiceOptions';
+import EventChoiceOptions from '@src/screens/bottom_tab/home_screen/EventChoiceOptions';
 import CustomText from '@src/components/native_components/CustomText';
-import {useSettingContext} from '@src/context/SettingContext';
 import CustomIcon from '@src/components/native_components/CustomIcon';
 import CustomHorizontalScrollView from '@src/components/native_components/HorizontalScrollView';
 import {hs, vs, ms} from '@src/utils/rNResponsive';
-import UpcomingEventItem from '@src/components/home_screen/UpcomingEventItem';
+import UpcomingEventItem from '@src/screens/bottom_tab/home_screen/UpcomingEventItem';
 import {Events} from '@src/assets/data/event';
-import InviteCard from '@src/components/home_screen/InviteCard';
-import EventSliderComponent from '@src/components/home_screen/EventSliderComponent';
+import InviteCard from '@src/screens/bottom_tab/home_screen/InviteCard';
+import EventSliderComponent from '@src/screens/bottom_tab/home_screen/EventSliderComponent';
 import CustomVerticleScrollView from '@src/components/native_components/CustomVerticleScrollView';
 import BottomBarComponent from '@src/components/bottom_bar_component/BottomBarComponent';
-import HomeBodyComponent from '@src/components/home_screen/HomeBodyComponent';
+import HomeBodyComponent from '@src/screens/bottom_tab/home_screen/HomeBodyComponent';
 import {useSelector} from 'react-redux';
 import {RootState} from '@src/redux/store';
 
@@ -49,8 +48,6 @@ const HomeScreen = () => {
   const {isDrawerOpened, isDetailsShowed} = useSelector(
     (state: RootState) => state.app,
   );
-
-  const {state} = useSettingContext();
 
   useEffect(() => {
     console.log('Rendering !!!');

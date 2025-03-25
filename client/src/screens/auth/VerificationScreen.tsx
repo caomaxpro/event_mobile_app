@@ -4,10 +4,8 @@ import CustomButton from '@src/components/native_components/ButtonComponent';
 import CustomContainerComponent from '@src/components/native_components/ContainerComponent';
 import CustomText from '@src/components/native_components/CustomText';
 import HeaderComponent from '@src/components/HeaderComponent';
-import {useSettingContext} from '@src/context/SettingContext';
 import {useAppNavigation} from '@src/hooks/userAppNavigation';
 import {log} from '@src/utils/logUtils';
-import {loadState} from '@src/utils/storageUtils';
 import React, {useState, useRef, useEffect} from 'react';
 import {
   View,
@@ -17,9 +15,6 @@ import {
   StyleSheet,
 } from 'react-native';
 
-// import {RootStackParamList} from '@src/navigation/AuthNavigator';
-// import {StackNavigationProp} from '@react-navigation/stack';
-
 // type NavigationProp = StackNavigationProp<RootStackParamList>;
 
 const VerificationScreen = ({navigation}: any): React.JSX.Element => {
@@ -27,9 +22,7 @@ const VerificationScreen = ({navigation}: any): React.JSX.Element => {
   const [code, setCode] = useState(['', '', '', '']);
   const [timer, setTimer] = useState(1000);
 
-  //   const navigation = useNavigation<NavigationProp>();
-
-  const {state} = useSettingContext();
+  const {theme} = useReduxSelector();
   const {authNavigation} = useAppNavigation();
 
   const inputRefs = useRef<Array<TextInput | null>>([null, null, null, null]);
@@ -77,14 +70,13 @@ const VerificationScreen = ({navigation}: any): React.JSX.Element => {
     const passcode = code.join('');
 
     // load state data
-    const state = await loadState();
 
-    if (
-      Date.now() < (state.token.passcodeExpiredAt ?? 0) &&
-      passcode === state.token.passcode
-    ) {
-      navigation.navigate('ResetPasswordScreen', {isEmailVerified: true});
-    }
+    // if (
+    //   Date.now() < (state.token.passcodeExpiredAt ?? 0) &&
+    //   passcode === state.token.passcode
+    // ) {
+    //   navigation.navigate('ResetPasswordScreen', {isEmailVerified: true});
+    // }
 
     navigation.navigate('ResetPasswordScreen', {isEmailVerified: false});
   };
@@ -131,7 +123,7 @@ const VerificationScreen = ({navigation}: any): React.JSX.Element => {
             <TextInput
               key={index}
               ref={el => (inputRefs.current[index] = el)}
-              style={[styles.codeInput, {fontFamily: state.text.fontFamily}]}
+              style={[styles.codeInput, {fontFamily: theme.fontFamily}]}
               value={digit}
               keyboardType="number-pad"
               maxLength={1}
@@ -143,7 +135,7 @@ const VerificationScreen = ({navigation}: any): React.JSX.Element => {
                 handleKeyPress(index, nativeEvent.key)
               }
               placeholder="_"
-              placeholderTextColor={state.theme.placeHolder}
+              placeholderTextColor={theme.placeHolder}
             />
           ))}
         </CustomContainerComponent>
@@ -163,8 +155,7 @@ const VerificationScreen = ({navigation}: any): React.JSX.Element => {
               customStyle={[
                 styles.resendLink,
                 {
-                  color:
-                    timer === 0 ? state.theme.button : state.theme.textOnBG,
+                  color: timer === 0 ? theme.button : theme.textOnBG,
                 },
               ]}>
               Re-send{' '}
@@ -265,3 +256,6 @@ const styles = StyleSheet.create({
 });
 
 export default VerificationScreen;
+function useReduxSelector(): {theme: any} {
+  throw new Error('Function not implemented.');
+}

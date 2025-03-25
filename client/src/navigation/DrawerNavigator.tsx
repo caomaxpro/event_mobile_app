@@ -30,7 +30,7 @@ import {MailIcon} from '@src/assets/svg/MailIcon';
 import {SettingIcon} from '@src/assets/svg/SettingIcon';
 import {QuestionIcon} from '@src/assets/svg/QuestionIcon';
 import {LogoutIcon} from '@src/assets/svg/LogoutIcon';
-import DrawerSection from '@src/components/home_screen/DrawerSection';
+import DrawerSection from '@src/screens/bottom_tab/home_screen/DrawerSection';
 import {PremiumIcon} from '@src/assets/svg/PremiumIcon';
 import CustomButton from '@src/components/native_components/ButtonComponent';
 import Animated from 'react-native-reanimated';

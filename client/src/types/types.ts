@@ -10,8 +10,8 @@ export type User = {
     facebook?: string;
     github?: string;
   };
-  events_created: Event[];
-  events_joined: Event[];
+  events_created: Partial<Event>[];
+  events_joined: Partial<Event>[];
   join_date: string;
   last_login?: string;
   account_status: 'active' | 'inactive';
@@ -20,28 +20,34 @@ export type User = {
   payment_history: string[];
 };
 
-type EventSchedule = {
-  time: string;
-  activity: string;
-};
-
 export type Event = {
   title: string;
-  description: string;
+  description?: string;
   creation_date: string;
-  event_date: string;
+  start_time: string;
+  end_time: string;
   total_tickets: number;
-  discounted_tickets: number;
+  total_discount_tickets: number;
+  discounted_value: number;
   price: number;
-  location: string;
-  participants: User[];
-  organizer: User;
-  event_status: 'active' | 'inactive';
-  event_type: string;
-  event_tags: string[];
-  event_image: string;
-  registration_deadline: string;
-  event_schedule: EventSchedule[];
+  price_after_tax: number;
+  participants: Partial<User>[];
+  organizer?: Partial<User>;
+  status: 'active' | 'inactive';
+  type: string;
+  tags: string[];
+  image: string;
   address: string;
-  ticket_sales_end_date: string;
 };
+
+export type ValidationResult = {
+  message: string;
+  isValid: boolean;
+};
+
+export interface InputField {
+  value: string;
+  touched: boolean;
+  onChange: (value: string) => void;
+  validate: () => ValidationResult[];
+}

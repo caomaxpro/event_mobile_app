@@ -8,7 +8,7 @@ import {
   ViewStyle,
 } from 'react-native';
 import {fontFamilies} from '@src/constants/fontSetting';
-import {useSettingContext} from '@src/context/SettingContext';
+import {useReduxSelector} from '@src/hooks/useReduxSelector';
 
 type CustomTextProps = TextProps & {
   children: React.ReactNode;
@@ -28,8 +28,7 @@ const CustomText = forwardRef<Text, CustomTextProps>(
 
     const fontFamily = textWeights[textWeight];
 
-    const {state} = useSettingContext();
-    const theme = state.theme;
+    const {theme} = useReduxSelector();
 
     return (
       <Text

@@ -1,4 +1,5 @@
 // components/CustomTextInput.tsx
+import {useReduxSelector} from '@src/hooks/useReduxSelector';
 import React, {forwardRef} from 'react';
 import {
   TextInput,
@@ -7,7 +8,6 @@ import {
   TextStyle,
   StyleProp,
 } from 'react-native';
-import {useSettingContext} from '@src/context/SettingContext';
 
 interface CustomTextInputProps extends TextInputProps {
   customStyle?: StyleProp<TextStyle>; // Allow additional styles
@@ -15,9 +15,7 @@ interface CustomTextInputProps extends TextInputProps {
 
 export const CustomTextInput = forwardRef<TextInput, CustomTextInputProps>(
   ({customStyle, ...props}, ref) => {
-    const {state} = useSettingContext();
-    const theme = state.theme;
-    const text = state.text;
+    const {theme} = useReduxSelector();
 
     return (
       <TextInput
@@ -26,7 +24,7 @@ export const CustomTextInput = forwardRef<TextInput, CustomTextInputProps>(
         style={[
           styles.defaultStyle,
           {
-            fontFamily: text.fontFamily,
+            fontFamily: theme.fontFamily,
             color: theme.textInput, // Set text color dynamically
             backgroundColor: theme.textInputBG,
           },

@@ -4,11 +4,10 @@ import CustomContainerComponent from '@src/components/native_components/Containe
 import {SplashLogo} from '@src/assets/svg/SplashLogo';
 import {ScreenComponent} from '@src/components/native_components/ScreenComponent';
 import {defaultStyle} from '@src/styles/defaultStyles';
-import {useSettingContext} from '@src/context/SettingContext';
+import {useReduxSelector} from '@src/hooks/useReduxSelector';
 
 const SplashScreen = () => {
-  const {state} = useSettingContext();
-  const theme = state.theme;
+  const {theme} = useReduxSelector();
 
   return (
     <ScreenComponent

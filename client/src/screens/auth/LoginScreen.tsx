@@ -1,60 +1,58 @@
-// LoginScreen.tsx
-import React, {useContext, useEffect, useState} from 'react';
-import {View, Text, Button, StyleSheet} from 'react-native';
-// import {StackScreenProps} from '@react-navigation/stack';
+import React from 'react';
 import {ScreenComponent} from '@src/components/native_components/ScreenComponent';
-import {
-  CustomTextInputComponent,
-  EmailInputComponent,
-} from '@src/components/form/CustomInputField';
-import {useEmailInput, usePasswordInput} from '@src/hooks/useInputField';
-import {Icon} from '@src/components/Icon';
-import CustomIcon from '@src/components/native_components/CustomIcon';
-import CustomButton from '@src/components/native_components/ButtonComponent';
-import {useSettingContext} from '@src/context/SettingContext';
+import {CustomTextInputComponent} from '@src/components/form/CustomInputField';
 import CustomContainerComponent from '@src/components/native_components/ContainerComponent';
-import CustomToggle from '@src/components/native_components/CustomToggle';
-import CustomText from '@src/components/native_components/CustomText';
 import {EventHubLogo} from '@src/assets/svg/EventHub';
 import {OtherLoginOptionComponent} from '@src/components/auth_component/OtherLoginOption';
-import {CircularRightArrow} from '@src/assets/svg/CircularRightArrow';
 import ArrowButton from '@src/components/button/ArrowButton';
-import {useLoginForm} from '@src/hooks/useLoginForm';
-import {CustomPasswordInputComponent} from '@src/components/form/PasswordInputComponent';
+import {loginUser} from '@src/services/authService';
+import {FORM_IDS} from '@src/constants/formIds';
+import CustomText from '@src/components/native_components/CustomText';
+import CustomToggle from '@src/components/native_components/CustomToggle';
+import CustomButton from '@src/components/native_components/ButtonComponent';
+import {useDispatch, useSelector} from 'react-redux';
+import {RootState} from '@src/redux/store';
+import {useReduxForm} from '@src/hooks/useReduxForm';
+import * as validator from '@src/utils/validatorUtils';
+import {StyleSheet} from 'react-native';
 import {CustomEmailInputComponent} from '@src/components/form/EmailInputComponent';
-import {log} from '@src/utils/logUtils';
-// import {AuthContext, useAuthContext} from '@src/context/AuthContext';/
-// import {AuthStackParamList} from '@src/navigation/AuthNavigation';
-
-// type LoginScreenProps = StackScreenProps<AuthStackParamList, 'LoginScreen'> & {
-//   setUser: React.Dispatch<React.SetStateAction<boolean>>;
-// };
+import {PasswordInputComponent} from '@src/components/form/PasswordInputComponent';
 
 export default function LoginScreen() {
-  const {emailField, passwordField, handleSubmit} = useLoginForm();
+  const [isRememberUser, setRememberUser] = React.useState<boolean>(false);
+  const dispatch = useDispatch();
 
-  const {state, setState} = useSettingContext();
-  //   const {login} = useContext(AuthContext);
+  const {registerField, handleSubmit} = useReduxForm(FORM_IDS.LOGIN);
 
-  const [isRememberUser, setRememberUser] = useState<boolean>(false);
+  const emailField = registerField('email', {
+    validator: validator.validateEmail,
+  });
 
-  useEffect(() => {
-    console.log('Rendering !!!');
+  const passwordField = registerField('password', {
+    validator: validator.validatePassword,
+    validatorArgs: [8, true, true, true, true], // minLength, requireSpecialChar, requireUppercase, requireLowercase, requireNumber
+  });
 
-    // if (navigation) {
-    //   setNavigation(navigation);
-    // }
-  }, []);
+  const onSubmit = async (formData: Record<string, string>) => {
+    try {
+      await loginUser({
+        email: formData.email,
+        password: formData.password,
+      });
+    } catch (error) {
+      console.error('Login failed:', error);
+    }
+  };
 
   return (
-    <ScreenComponent
-      //   customStyle={{height: '100%', width: '100%', flex: 1}}
-      //   contentStyle={{height: '100%', width: '100%', flex: 1}}
-      // contentStyle={{justifyContent: 'center'}}
-      displayBackgroundImage={false}>
+    <ScreenComponent displayBackgroundImage={false}>
       <CustomContainerComponent customStyle={{marginBottom: 50}}>
         <EventHubLogo />
       </CustomContainerComponent>
+
+      <CustomEmailInputComponent inputField={emailField} />
+
+      <PasswordInputComponent inputField={passwordField} />
 
       <CustomText
         textWeight="medium"
@@ -66,9 +64,6 @@ export default function LoginScreen() {
         }}>
         Sign in
       </CustomText>
-
-      <CustomEmailInputComponent inputField={emailField} />
-      <CustomPasswordInputComponent passwordField={passwordField} />
 
       <CustomContainerComponent
         customStyle={{width: 317}}
@@ -90,36 +85,9 @@ export default function LoginScreen() {
         </CustomButton>
       </CustomContainerComponent>
 
-      <ArrowButton
-        label="SIGN IN"
-        onPress={async () => {
-          log('[Login Screen]', 'Sign In');
-
-          await handleSubmit();
-        }}
-      />
+      <ArrowButton label="SIGN IN" onPress={() => handleSubmit(onSubmit)} />
 
       <OtherLoginOptionComponent />
-
-      <CustomContainerComponent customStyle={{marginTop: 20}}>
-        <CustomText customStyle={styles.signUpText}>
-          Don't have an account?{' '}
-        </CustomText>
-        <CustomButton
-          customStyle={{
-            width: 'auto',
-            height: 'auto',
-            backgroundColor: 'transparent',
-            // marginLeft: ,
-            padding: 0,
-            // borderWidth: 1,
-          }}
-          onPress={() => {}}>
-          <CustomText textWeight="thin" customStyle={styles.signUpLink}>
-            Sign Up
-          </CustomText>
-        </CustomButton>
-      </CustomContainerComponent>
     </ScreenComponent>
   );
 }

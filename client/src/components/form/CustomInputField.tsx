@@ -8,138 +8,72 @@ import {
   TextStyle,
   View,
 } from 'react-native';
-import CustomText from './CustomText';
+import CustomText from '../native_components/CustomText';
 import {CustomTextInput} from './CustomTextInput';
-import {useSettingContext} from '@src/context/SettingContext';
-import CustomContainerComponent from './ContainerComponent';
-import CustomIcon, {CustomIconProps} from './CustomIcon';
-import CustomButton from './ButtonComponent';
+import CustomContainerComponent from '../native_components/ContainerComponent';
+import CustomIcon from '../native_components/CustomIcon';
+import CustomButton from '../native_components/ButtonComponent';
 import {error, log} from '@src/utils/logUtils';
-
-export type InputField = {
-  value: string;
-  onTextChange: (value: string) => void;
-  error: string;
-};
+import {useReduxSelector} from '@src/hooks/useReduxSelector';
+import {ValidationResult} from '@src/utils/validatorUtils';
+import {InputField} from '@src/types/types';
 
 export interface InputComponentProps extends TextInputProps {
-  label?: string;
   inputField: InputField;
   containerStyle?: StyleProp<TextStyle>;
   textInputStyle?: StyleProp<TextStyle>;
-  preIcon?: React.JSX.Element;
-  password?: boolean;
 }
 
 // Add forwardRef to CustomTextInputComponent
 export const CustomTextInputComponent = forwardRef<
   TextInput,
   InputComponentProps
->(
-  (
-    {
-      label,
-      inputField,
-      containerStyle,
-      textInputStyle,
-      preIcon,
-      password,
-      ...inputProps
-    },
-    ref,
-  ) => {
-    const {state} = useSettingContext();
+>(({inputField, containerStyle, textInputStyle, ...inputProps}, ref) => {
+  const {theme} = useReduxSelector();
 
-    const [isPasswordVisible, setPasswordVisible] = useState<boolean>(false);
+  const inputRef = useRef<TextInput>(null);
 
-    const theme = state.theme;
-    const text = state.text;
+  useEffect(() => {
+    if (inputField.value.length === 0 && inputRef.current) {
+      inputRef.current.clear();
+      inputRef.current.focus();
+    }
+  }, [inputField?.value]);
 
-    const inputRef = useRef<TextInput>(null);
+  //   useEffect(() => {
+  //     log('Error Value', inputField.error);
+  //   }, [inputField?.error]);
 
-    useEffect(() => {
-      if (inputField.value.length === 0 && inputRef.current) {
-        inputRef.current.clear();
-        inputRef.current.focus();
-      }
-    }, [inputField?.value]);
-
-    useEffect(() => {
-      log('Error Value', inputField.error);
-    }, [inputField?.error]);
-
-    return (
-      <View style={{width: 317, marginBottom: 19}}>
-        {label && <CustomText customStyle={styles.label}>{label}</CustomText>}
-
-        <CustomContainerComponent
-          customStyle={[
-            styles.container,
-            {borderColor: theme.inputBorder},
-            containerStyle,
+  return (
+    <View style={{width: 317, marginBottom: 19}}>
+      <CustomContainerComponent
+        customStyle={[
+          styles.container,
+          {borderColor: theme.inputBorder},
+          containerStyle,
+        ]}
+        contentStyle={{display: 'flex', flexDirection: 'row'}}>
+        <TextInput
+          ref={inputRef} // Pass the ref to the native TextInput
+          style={[
+            styles.default_input_style,
+            {
+              fontFamily: theme.fontFamily,
+              color: theme.textInput, // Set text color dynamically
+            },
+            textInputStyle,
           ]}
-          contentStyle={{display: 'flex', flexDirection: 'row'}}>
-          <CustomContainerComponent customStyle={styles.icon_container}>
-            {preIcon}
-          </CustomContainerComponent>
-
-          <TextInput
-            ref={inputRef} // Pass the ref to the native TextInput
-            style={[
-              styles.default_input_style,
-              {
-                fontFamily: text.fontFamily,
-                color: theme.textInput, // Set text color dynamically
-                // backgroundColor: theme.textInputBG,
-              },
-              textInputStyle,
-            ]}
-            placeholderTextColor={theme.placeHolder}
-            secureTextEntry={password && !isPasswordVisible}
-            multiline={false}
-            numberOfLines={1}
-            onChangeText={inputField.onTextChange}
-            {...inputProps}
-          />
-
-          <CustomContainerComponent customStyle={styles.icon_container}>
-            {password && (
-              <CustomButton
-                customStyle={{
-                  backgroundColor: 'transparent',
-                }}
-                activeOpacity={1}
-                onPress={() => {
-                  setPasswordVisible(!isPasswordVisible);
-                }}>
-                {isPasswordVisible ? (
-                  <CustomIcon
-                    type="Octicons"
-                    name="eye-closed"
-                    size={22}
-                    color={state.theme.inputBorder}
-                  />
-                ) : (
-                  <CustomIcon
-                    type="Octicons"
-                    name="eye"
-                    size={22}
-                    color={state.theme.inputBorder}
-                  />
-                )}
-              </CustomButton>
-            )}
-          </CustomContainerComponent>
-        </CustomContainerComponent>
-        {/* {console.log(inputField.error)} */}
-
-        {inputField?.error && inputField?.value && (
-          <CustomText customStyle={styles.error}>{inputField.error}</CustomText>
-        )}
-      </View>
-    );
-  },
-);
+          placeholderTextColor={theme.placeHolder}
+          multiline={false}
+          numberOfLines={1}
+          onChangeText={inputField.onChange}
+          {...inputProps}
+        />
+      </CustomContainerComponent>
+      {/* {console.log(inputField.error)} */}
+    </View>
+  );
+});
 
 // Add forwardRef to EmailInputComponent
 export const EmailInputComponent = forwardRef<TextInput, InputComponentProps>(

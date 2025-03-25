@@ -27,12 +27,13 @@ import LoginScreen from '@src/screens/auth/LoginScreen';
 import RegisterScreen from '@src/screens/auth/RegisterScreen';
 import VerificationScreen from '@src/screens/auth/VerificationScreen';
 import {ResetPasswordScreen} from '@src/screens/auth/ResetPasswordScreen';
-// import BASE_URL from '@src/utils/envVariables';
-import {loadState} from '@src/utils/storageUtils';
 import MainNavigator from '@src/navigation/MainNavigator';
 import TabNavigator from '@src/navigation/TabNavigator';
 import AppRouters from '@src/navigation/AppRouter';
 import {SafeAreaProvider, SafeAreaView} from 'react-native-safe-area-context';
+import EventFormComponent from '@src/screens/bottom_tab/EventFormComponent';
+import CreateEventModal from '@src/modals/CreateEventModal';
+import FilterEventModal from '@src/modals/EventFilterModal';
 
 type user = {
   email: string;
@@ -56,8 +57,11 @@ function App(): React.JSX.Element {
       />
 
       <SafeAreaView style={{flex: 1}} edges={['left', 'right']}>
+        {/* <EventFormComponent /> */}
         <NavigationContainer>
-          <AppRouters />
+          {/* <CreateEventModal navigation={null} /> */}
+          <FilterEventModal />
+          {/* <AppRouters /> */}
         </NavigationContainer>
       </SafeAreaView>
     </SafeAreaProvider>

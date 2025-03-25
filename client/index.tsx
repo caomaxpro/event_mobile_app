@@ -7,10 +7,10 @@ import {AppRegistry} from 'react-native';
 import App from '@src/app/App';
 import {name as appName} from './app.json';
 import {Provider} from 'react-redux';
+import {KeyboardProvider} from 'react-native-keyboard-controller';
 
 // import store from '@src/redux/store';
 // import { Provider } from 'react-redux';
-import {SettingProvider} from '@src/context/SettingContext';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 
 import {
@@ -18,7 +18,6 @@ import {
   ReanimatedLogLevel,
 } from 'react-native-reanimated';
 import store from '@src/redux/store';
-// import {AuthProvider} from '@src/context/AuthContext';
 
 configureReanimatedLogger({
   level: ReanimatedLogLevel.warn,
@@ -28,9 +27,9 @@ configureReanimatedLogger({
 const Root: React.FC = () => (
   <Provider store={store}>
     <GestureHandlerRootView style={{flex: 1}}>
-      <SettingProvider>
+      <KeyboardProvider>
         <App />
-      </SettingProvider>
+      </KeyboardProvider>
     </GestureHandlerRootView>
   </Provider>
 );

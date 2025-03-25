@@ -4,10 +4,8 @@ import {View, Text, Button, StyleSheet} from 'react-native';
 // import {Header, StackScreenProps} from '@react-navigation/stack';
 import {ScreenComponent} from '@src/components/native_components/ScreenComponent';
 import {CustomTextInputComponent} from '@src/components/form/CustomInputField';
-import {useEmailInput, usePasswordInput} from '@src/hooks/useInputField';
 import {Icon} from '@src/components/Icon';
 import CustomIcon from '@src/components/native_components/CustomIcon';
-import {useSettingContext} from '@src/context/SettingContext';
 import CustomContainerComponent from '@src/components/native_components/ContainerComponent';
 import CustomToggle from '@src/components/native_components/CustomToggle';
 import CustomButton from '@src/components/native_components/ButtonComponent';
@@ -17,10 +15,16 @@ import {OtherLoginOptionComponent} from '@src/components/auth_component/OtherLog
 import {CircularRightArrow} from '@src/assets/svg/CircularRightArrow';
 import HeaderComponent from '@src/components/HeaderComponent';
 import ArrowButton from '@src/components/button/ArrowButton';
-import {useRegisterForm} from '@src/hooks/useRegisterForm';
-import {CustomPasswordInputComponent} from '@src/components/form/PasswordInputComponent';
 import {CustomEmailInputComponent} from '@src/components/form/EmailInputComponent';
 import {useAppNavigation} from '@src/hooks/userAppNavigation';
+import {FORM_IDS} from '@src/constants/formIds';
+import {useReduxForm} from '@src/hooks/useReduxForm';
+import {PasswordInputComponent} from '@src/components/form/PasswordInputComponent';
+import {CustomInputFieldCard} from '@src/components/form/CustomInputFieldCard';
+import * as validator from '@src/utils/validatorUtils';
+import {CustomTextFieldComponent} from '@src/components/form/CustomTextFieldComponent';
+import {RootState} from '@src/redux/store';
+import {useReduxSelector} from '@src/hooks/useReduxSelector';
 // import {AuthStackParamList} from '@src/navigation/AuthNavigation';
 
 // type LoginScreenProps = StackScreenProps<AuthStackParamList, 'LoginScreen'> & {
@@ -28,26 +32,38 @@ import {useAppNavigation} from '@src/hooks/userAppNavigation';
 // };
 
 export default function RegisterScreen() {
-  const {
-    fullNameField,
-    emailField,
-    passwordField,
-    repasswordField,
-    handleSubmit,
-  } = useRegisterForm();
+  const {registerField, handleSubmit, reset} = useReduxForm(FORM_IDS.REGISTER);
+  const {form} = useReduxSelector();
 
-  const {state} = useSettingContext();
+  const usernameField = registerField('username', {
+    validator: validator.validateTextLength,
+    validatorArgs: [3, 100], // minLength, maxLength
+  });
+
+  const emailField = registerField('email', {
+    validator: validator.validateEmail,
+  });
+
+  const passwordField = registerField('password', {
+    validator: validator.validatePassword,
+    validatorArgs: [8, true, true, true, true], // minLength, requireSpecialChar, requireUppercase, requireLowercase, requireNumber
+  });
+
+  const repasswordField = registerField('repassword', {
+    validator: validator.validateRepassword,
+    validatorArgs: [passwordField.value], // minLength, requireSpecialChar, requireUppercase, requireLowercase, requireNumber
+  });
 
   const [isRememberUser, setRememberUser] = useState<boolean>(false);
   const {authNavigation} = useAppNavigation();
 
   return (
     <ScreenComponent
-      //   contentStyle={{justifyContent: 'space-evenly'}}
+      headerComponent={<HeaderComponent navigation={authNavigation} />}
+      contentStyle={{justifyContent: 'space-evenly'}}
+      scrollEnabled={true}
       displayBackgroundImage={true}>
-      <HeaderComponent navigation={authNavigation} />
-
-      <CustomText
+      {/* <CustomText
         textWeight="medium"
         customStyle={{
           fontSize: 24,
@@ -58,32 +74,39 @@ export default function RegisterScreen() {
           marginBottom: 20,
         }}>
         Sign Up
-      </CustomText>
-      <CustomTextInputComponent
-        preIcon={
-          <CustomIcon
-            type="AntDesign"
-            name="user"
-            size={22}
-            color={state.theme.inputBorder}
-          />
-        }
-        textContentType="emailAddress"
-        inputField={fullNameField}
-        placeholder="Full name"
-      />
-      <CustomEmailInputComponent inputField={emailField} />
+      </CustomText> */}
 
-      <CustomPasswordInputComponent passwordField={passwordField} />
-      <CustomPasswordInputComponent
-        passwordField={repasswordField}
-        confirmPassword={true}
+      <CustomTextFieldComponent
+        title="Username"
+        inputField={usernameField}
+        iconType="FontAwesome6"
+        iconName="user"
+        placeholder="Username"
       />
+
+      <CustomTextFieldComponent
+        title="Email"
+        inputField={emailField}
+        iconType="AntDesign"
+        iconName="mail"
+        placeholder="abc@email.com"
+      />
+
+      <PasswordInputComponent inputField={passwordField} />
+
+      <PasswordInputComponent inputField={repasswordField} confirmPassword />
+      {/* <PasswordInputComponent inputField={repasswordField} confirmPassword />
+      <PasswordInputComponent inputField={repasswordField} confirmPassword />
+      <PasswordInputComponent inputField={repasswordField} confirmPassword />
+      <PasswordInputComponent inputField={repasswordField} confirmPassword />
+      <PasswordInputComponent inputField={repasswordField} confirmPassword />
+      <PasswordInputComponent inputField={repasswordField} confirmPassword /> */}
 
       <ArrowButton
         label="SIGN UP"
         onPress={() => {
-          handleSubmit();
+          //   handleSubmit();
+          console.log('[Register Form]', form.registerForm);
         }}
       />
 

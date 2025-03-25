@@ -1,52 +1,53 @@
-import {useState} from 'react';
-import {View, Text, TextInput, StyleSheet, TextInputProps} from 'react-native';
-import * as validator from '@src/utils/validatorUtils';
-import {log} from '@src/utils/logUtils';
-import { useEmailInput, useInput, usePasswordInput, useRepasswordInput } from './useInputField';
-import { loginUser } from '@src/services/authService';
-import { useNavigation } from '@react-navigation/native';
-import { AxiosResponse } from 'axios';
-// import { useAuthContext } from '@src/context/AuthContext';
-import { useSettingContext } from '@src/context/SettingContext';
-import { useAppNavigation } from './userAppNavigation';
+// import {useState} from 'react';
+// import {View, Text, TextInput, StyleSheet, TextInputProps} from 'react-native';
+// import * as validator from '@src/utils/validatorUtils';
+// import {log} from '@src/utils/logUtils';
+// import {
+//   useEmailInput,
+//   useInput,
+//   usePasswordInput,
+//   useRepasswordInput,
+// } from './useInputField';
+// import {loginUser} from '@src/services/authService';
+// import {useNavigation} from '@react-navigation/native';
+// import {AxiosResponse} from 'axios';
+// // import { useAuthContext } from '@src/context/AuthContext';
 
-interface UseInputFieldProps {
-  initialValue?: string | number;
-  validate?: (value: string) => string;
-}
+// import {useAppNavigation} from './userAppNavigation';
+// import {useReduxSelector} from './useReduxSelector';
 
-export function useLoginForm() {
-    const emailField = useEmailInput('')
-    const passwordField = usePasswordInput('')
+// interface UseInputFieldProps {
+//   initialValue?: string | number;
+//   validate?: (value: string) => string;
+// }
 
-    const {state, setState} = useSettingContext()
+// export function useLoginForm() {
+//   const emailField = useEmailInput('');
+//   const passwordField = usePasswordInput('');
 
-    // const {login} = useAuthContext()
+//   const {theme} = useReduxSelector();
 
-    const navigation = useAppNavigation()
-   
-    const handleSubmit = async (): Promise<void> => {
-        const data = {
-            email: emailField.value,
-            password: passwordField.value,
-        }
+//   const navigation = useAppNavigation();
 
-        log('[Login Form]', data)
+//   const handleSubmit = async (): Promise<void> => {
+//     const data = {
+//       email: emailField.value,
+//       password: passwordField.value,
+//     };
 
-        // send data to server side
-        const res = await loginUser(data)
+//     log('[Login Form]', data);
 
-        // receive respone => if ok => save to state
-        if (res.status === 200) {
-            console.log(res.data.token)
-            // await login(res.data.token)
+//     // send data to server side
+//     const res = await loginUser(data);
 
-            setState({...state, token: {jwt: res.data.token}})
-            
-            navigation.authNavigation.navigate('DrawerNavigator')
-        }
-    };
-    
-    return {emailField, passwordField, handleSubmit};
-}
+//     // receive respone => if ok => save to state
+//     if (res.status === 200) {
+//       console.log(res.data.token);
+//       // await login(res.data.token)
 
+//       navigation.authNavigation.navigate('DrawerNavigator');
+//     }
+//   };
+
+//   return {emailField, passwordField, handleSubmit};
+// }

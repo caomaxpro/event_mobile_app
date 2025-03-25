@@ -4,8 +4,8 @@
     "baseUrl": "./", // Set the base directory
     "paths": {
       "@src/*": ["src/*"],
-      "@root/*": ["*"]
+      "@root/*": ["*"],
+      "@env": ["@env"]
     }
   }
-
 }

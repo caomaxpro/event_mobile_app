@@ -5,22 +5,17 @@ import React, {useEffect, useState} from 'react';
 import AuthNavigator from './AuthNavigator';
 import MainNavigator from './MainNavigator';
 import SplashScreen from '@src/screens/SplashScreen';
-import {useSettingContext} from '@src/context/SettingContext';
 import TabNavigator from './TabNavigator';
 import DrawerNavigator from './DrawerNavigator';
 
 const AppRouters = () => {
   const [splashScreen, setSplashScreen] = useState<boolean>(true);
 
-  const {state} = useSettingContext();
-
   useEffect(() => {
     // console.log(BASE_URL);
 
     const timer = setTimeout(async () => {
       // fetch user data from storage
-      //   const user = await loadState();
-
       //   if (user) {
       //   }
 
@@ -33,11 +28,10 @@ const AppRouters = () => {
     return () => clearTimeout(timer);
   }, []);
 
-  useState;
-
   return (
     <>
-      <DrawerNavigator />
+      <AuthNavigator />
+      {/* <DrawerNavigator /> */}
       {/* <TabNavigator /> */}
 
       {/* {splashScreen ? (

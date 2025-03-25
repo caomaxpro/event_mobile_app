@@ -1,36 +1,162 @@
-import {StyleSheet, Text, View} from 'react-native';
-import React from 'react';
-import {useSettingContext} from '@src/context/SettingContext';
+// CustomTextInputComponent.tsx
+import React, {forwardRef, useEffect, useRef, useState} from 'react';
+import {
+  StyleProp,
+  StyleSheet,
+  TextInput,
+  TextInputProps,
+  TextStyle,
+  View,
+} from 'react-native';
+import CustomText from '../native_components/CustomText';
+import {CustomTextInput} from './CustomTextInput';
+import CustomContainerComponent from '../native_components/ContainerComponent';
 import CustomIcon from '../native_components/CustomIcon';
+import CustomButton from '../native_components/ButtonComponent';
+import {error, log} from '@src/utils/logUtils';
+import {useReduxSelector} from '@src/hooks/useReduxSelector';
 import {CustomTextInputComponent} from './CustomInputField';
+import {CustomInputFieldCard} from './CustomInputFieldCard';
+import {InputField} from '@src/types/types';
 
-type PasswordInputComponentProps = {
-  passwordField: any;
+export interface InputComponentProps extends TextInputProps {
+  inputField: InputField;
+  containerStyle?: StyleProp<TextStyle>;
+  textInputStyle?: StyleProp<TextStyle>;
   confirmPassword?: boolean;
-};
+  title?: string;
+  showTitle?: boolean;
+}
 
-export const CustomPasswordInputComponent: React.FC<
-  PasswordInputComponentProps
-> = ({passwordField, confirmPassword = false}) => {
-  const {state} = useSettingContext();
+export const PasswordInputComponent = forwardRef<
+  TextInput,
+  InputComponentProps
+>(
+  (
+    {
+      inputField,
+      containerStyle,
+      textInputStyle,
+      confirmPassword = false,
+      title = confirmPassword ? 'Confirm Password' : 'Password',
+      showTitle = true,
+      ...inputProps
+    },
+    ref,
+  ) => {
+    const {theme} = useReduxSelector();
+    const [isPasswordVisible, setPasswordVisible] = useState<boolean>(false);
+    const inputRef = useRef<TextInput>(null);
 
-  return (
-    <CustomTextInputComponent
-      // containerStyle={}
-      preIcon={
-        <CustomIcon
-          type="Feather"
-          name="lock"
-          size={22}
-          color={state.theme.inputBorder}
-        />
+    useEffect(() => {
+      if (inputField.value.length === 0 && inputRef.current) {
+        inputRef.current.clear();
+        inputRef.current.focus();
       }
-      textContentType="password"
-      inputField={passwordField}
-      password={true}
-      placeholder={!confirmPassword ? 'Your password' : 'Confirm your password'}
-    />
-  );
-};
+    }, [inputField?.value]);
 
-const styles = StyleSheet.create({});
+    return (
+      <CustomInputFieldCard
+        title={title}
+        showTitle={showTitle}
+        error={inputField.validate()}>
+        <CustomContainerComponent
+          customStyle={[
+            styles.container,
+            {borderColor: theme.inputBorder},
+            containerStyle,
+          ]}
+          contentStyle={{display: 'flex', flexDirection: 'row'}}>
+          <CustomContainerComponent customStyle={styles.icon_container}>
+            <CustomIcon
+              type="Feather"
+              name="lock"
+              size={22}
+              color={theme.inputBorder}
+            />
+          </CustomContainerComponent>
+
+          <TextInput
+            ref={inputRef}
+            style={[
+              styles.default_input_style,
+              {
+                fontFamily: theme.fontFamily,
+                color: theme.textInput,
+              },
+              textInputStyle,
+            ]}
+            placeholderTextColor={theme.placeHolder}
+            secureTextEntry={!isPasswordVisible}
+            multiline={false}
+            numberOfLines={1}
+            onChangeText={inputField.onChange}
+            placeholder={
+              !confirmPassword ? 'Your password' : 'Confirm your password'
+            }
+            {...inputProps}
+          />
+
+          <CustomContainerComponent customStyle={styles.icon_container}>
+            <CustomButton
+              customStyle={{
+                backgroundColor: 'transparent',
+              }}
+              activeOpacity={1}
+              onPress={() => {
+                setPasswordVisible(!isPasswordVisible);
+              }}>
+              {isPasswordVisible ? (
+                <CustomIcon
+                  type="Octicons"
+                  name="eye-closed"
+                  size={22}
+                  color={theme.inputBorder}
+                />
+              ) : (
+                <CustomIcon
+                  type="Octicons"
+                  name="eye"
+                  size={22}
+                  color={theme.inputBorder}
+                />
+              )}
+            </CustomButton>
+          </CustomContainerComponent>
+        </CustomContainerComponent>
+      </CustomInputFieldCard>
+    );
+  },
+);
+
+const styles = StyleSheet.create({
+  container: {
+    display: 'flex',
+    flexDirection: 'column',
+    borderWidth: 2,
+    borderRadius: 12,
+    width: 317,
+    height: 56,
+    alignItems: 'center',
+    alignContent: 'flex-start',
+    justifyContent: 'center',
+    overflow: 'hidden',
+  },
+  default_input_style: {
+    paddingLeft: 0,
+    width: '70%',
+    paddingHorizontal: 0,
+    fontSize: 14,
+    height: '100%',
+    backgroundColor: 'transparent',
+  },
+  icon_container: {
+    width: '15%',
+    height: '100%',
+    display: 'flex',
+    justifyContent: 'center',
+    alignContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'transparent',
+  },
+});

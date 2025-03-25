@@ -9,31 +9,61 @@ const eventSchema = new Schema({
   },
   description: {
     type: String,
-    required: [true, 'Description is required'],
+    // required: [true, 'Description is required'],
     trim: true,
   },
   creation_date: {
-    type: Date,
+    type: String,
     required: [true, 'Creation date is required'],
-    default: Date.now,
+    default: new Date().toISOString(),
   },
-  event_date: {
-    type: Date,
-    required: [true, 'Event date is required'],
+  start_time: {
+    type: String,
+    required: [true, 'Event time is required'],
     validate: {
       validator: function (value) {
-        return value > Date.now(); // Event date must be in the future
+        return new Date(value) > new Date(); // Event date must be in the future
       },
-      message: 'Event date must be in the future',
+      message: 'Event time must be in the future',
     },
+  },
+  end_time: {
+    type: String,
+    required: [true, 'Event time is required'],
+    validate: [
+      {
+        validator: function (value) {
+          return new Date(value) > new Date(); // Event date must be in the future
+        },
+        message: 'Event time must be in the future',
+      },
+      {
+        validator: function (value) {
+          return new Date(value) > new Date(this.start_time);
+        },
+        message: 'End time must be after start time',
+      },
+    ],
   },
   total_tickets: {
     type: Number,
     required: [true, 'Total tickets are required'],
     min: [1, 'Total tickets must be at least 1'],
   },
-  discounted_tickets: {
+  total_discount_tickets: {
     type: Number,
+    required: [true, 'Total discount tickets are required'],
+    min: [0, 'Total discount tickets cannot be negative'],
+    validate: {
+      validator: function (value) {
+        return value <= this.total_tickets; // Event date must be in the future
+      },
+      message: 'Total discount tickets cannot be greater than total tickets',
+    },
+  },
+  discounted_value: {
+    type: Number,
+    default: 0.05,
     required: [true, 'Discounted tickets are required'],
     min: [0, 'Discounted tickets cannot be negative'],
   },
@@ -42,51 +72,42 @@ const eventSchema = new Schema({
     required: [true, 'Price is required'],
     min: [0, 'Price cannot be negative'],
   },
+  price_after_tax: {
+    type: Number,
+    required: [true, 'Price after tax is required'],
+    min: [0, 'Price after tax cannot be negative'],
+  },
   location: {
     type: String,
     required: [true, 'Location is required'],
     trim: true,
   },
   participants: {
-    type: [String],
+    type: [mongoose.Schema.Types.ObjectId],
+    ref: 'User',
+    required: false,
     default: [],
-    validate: {
-      validator: function (value) {
-        return Array.isArray(value); // Ensure participants is an array
-      },
-      message: 'Participants must be an array',
-    },
   },
-  organizers: {
-    type: [String],
-    default: [],  // No longer required
-    validate: {
-      validator: function (value) {
-        return Array.isArray(value); // Ensure organizers is an array
-      },
-      message: 'Organizers must be an array',
-    },
+  organizer: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: false,
   },
-  ticket_status: {
+  status: {
     type: String,
     enum: ['active', 'inactive'],
     default: 'active',
   },
-  event_status: {
-    type: String,
-    enum: ['active', 'inactive'],
-    default: 'active',
-  },
-  event_type: {
+  type: {
     type: String,
     required: [true, 'Event type is required'],
   },
-  event_tags: {
+  tags: {
     type: [String],
     required: [true, 'Event tags are required'],
     default: ['AI', 'Showcase', 'Networking'],
   },
-  event_image: {
+  image: {
     type: String,
     required: [true, 'Event image is required'],
     validate: {
@@ -97,45 +118,29 @@ const eventSchema = new Schema({
       message: 'Invalid image URL format',
     },
   },
-  registration_deadline: {
-    type: Date,
-    required: [true, 'Registration deadline is required'],
-  },
-  event_schedule: [
-    {
-      time: {
-        type: Date,
-        required: [true, 'Event time is required'],
-        validate: {
-          validator: function (value) {
-            return value > Date.now(); // Activity time must be in the future
-          },
-          message: 'Event time must be in the future',
-        },
-      },
-      activity: {
-        type: String,
-        required: [true, 'Activity description is required'],
-        trim: true,
-      },
-    },
-  ],
-
+  //   event_schedule: [
+  //     {
+  //       time: {
+  //         type: Date,
+  //         required: [true, 'Event time is required'],
+  //         validate: {
+  //           validator: function (value) {
+  //             return value > Date.now(); // Activity time must be in the future
+  //           },
+  //           message: 'Event time must be in the future',
+  //         },
+  //       },
+  //       activity: {
+  //         type: String,
+  //         required: [true, 'Activity description is required'],
+  //         trim: true,
+  //       },
+  //     },
+  //   ],
   address: {
     type: String,
     required: [true, 'Address is required'],
     trim: true,
-  },
-
-  ticket_sales_end_date: {
-    type: Date,
-    required: [true, 'Ticket sales end date is required'],
-    validate: {
-      validator: function (value) {
-        return value > Date.now(); // Sales end date must be in the future
-      },
-      message: 'Ticket sales end date must be in the future',
-    },
   },
 });
 

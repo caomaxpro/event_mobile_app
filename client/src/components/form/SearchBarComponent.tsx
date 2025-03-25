@@ -8,10 +8,10 @@ import {FilterIcon} from '@src/assets/svg/FilterIcon';
 import CustomText from '../native_components/CustomText';
 import CustomButton from '../native_components/ButtonComponent';
 import {fontFamilies} from '@src/constants/fontSetting';
-import {useSettingContext} from '@src/context/SettingContext';
+import {useReduxSelector} from '@src/hooks/useReduxSelector';
 
 const SearchBarComponent = (): React.JSX.Element => {
-  const {state} = useSettingContext();
+  const {theme} = useReduxSelector();
 
   return (
     <CustomContainerComponent
@@ -28,7 +28,7 @@ const SearchBarComponent = (): React.JSX.Element => {
           paddingRight: 10,
           borderWidth: 0,
           borderRightWidth: 2,
-          borderRightColor: state.theme.placeHolder,
+          borderRightColor: theme.placeHolder,
           display: 'flex',
           flexDirection: 'row',
           justifyContent: 'flex-start',
@@ -64,7 +64,7 @@ const SearchBarComponent = (): React.JSX.Element => {
           textWeight="light"
           customStyle={{
             fontSize: 12,
-            color: state.theme.textOnContainer,
+            color: theme.textOnContainer,
             // marginLeft: 2,
           }}>
           Filters

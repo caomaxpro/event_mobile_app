@@ -7,7 +7,7 @@ import {
 } from 'react-native';
 import React, {ReactNode} from 'react';
 import CustomText from './CustomText';
-import {useSettingContext} from '@src/context/SettingContext';
+import {useReduxSelector} from '@src/hooks/useReduxSelector';
 // import {Canvas, Path} from '@shopify/react-native-skia';
 // import {CustomButtons} from './SVGPaths';
 
@@ -29,12 +29,8 @@ const CustomButton: React.FC<CustomButtonProps> = ({
   ...props
 }) => {
   // Context
-  const {state} = useSettingContext();
-  const theme = state.theme;
-  const text = state.text;
 
-  // Path
-  //   const path = CustomButtons[0];
+  const {theme} = useReduxSelector();
 
   return (
     <TouchableOpacity

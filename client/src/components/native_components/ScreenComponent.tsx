@@ -1,33 +1,39 @@
 import {
-  Image,
   StyleSheet,
   View,
-  ViewProps,
   StyleProp,
   ViewStyle,
   ImageBackground,
   ScrollView,
   ScrollViewProps,
-  SafeAreaView,
   StatusBar,
+  KeyboardAvoidingView,
 } from 'react-native';
-import React, {forwardRef, useEffect} from 'react';
+import React, {forwardRef} from 'react';
 import {SCREEN_HEIGHT, SCREEN_WIDTH} from '@src/utils/appInfo';
-import {useSettingContext} from '@src/context/SettingContext';
-import Animated from 'react-native-reanimated';
+import {useReduxSelector} from '@src/hooks/useReduxSelector';
+import Animated, {
+  useSharedValue,
+  useAnimatedScrollHandler,
+} from 'react-native-reanimated';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-controller';
 
-type ScreenComponentProps = ViewProps & {
+const AnimatedScrollView = Animated.createAnimatedComponent(ScrollView);
+
+type ScreenComponentProps = ScrollViewProps & {
   children?: React.ReactNode;
+  headerComponent?: React.ReactNode;
   customStyle?: StyleProp<ViewStyle>;
   contentStyle?: StyleProp<ViewStyle>;
   displayBackgroundImage?: boolean;
-  scrollEnabled?: boolean; // Thêm prop để kiểm soát việc cuộn
+  scrollEnabled?: boolean;
 };
 
-export const ScreenComponent = forwardRef<View, ScreenComponentProps>(
+export const ScreenComponent = forwardRef<ScrollView, ScreenComponentProps>(
   (
     {
       children,
+      headerComponent,
       customStyle,
       contentStyle,
       displayBackgroundImage = true,
@@ -36,66 +42,103 @@ export const ScreenComponent = forwardRef<View, ScreenComponentProps>(
     },
     ref,
   ) => {
-    const {state} = useSettingContext();
-    const theme = state.theme;
+    const {theme} = useReduxSelector();
     const backgroundImage = theme.bgImage;
+    const scrollY = useSharedValue(0);
+
+    const scrollHandler = useAnimatedScrollHandler({
+      onScroll: event => {
+        scrollY.value = event.contentOffset.y;
+      },
+    });
 
     return (
-      <View
-        {...props}
-        ref={ref} // Đảm bảo ref được truyền đúng vào View
-        style={[
-          styles.default_container,
-          {
-            backgroundColor: theme.background,
-            height: SCREEN_HEIGHT + (StatusBar?.currentHeight || 0),
-          },
-          customStyle,
-        ]}>
-        {displayBackgroundImage ? (
-          <ImageBackground
-            source={backgroundImage}
-            resizeMode="contain"
-            style={styles.backgroundImage}>
-            <View style={[styles.content, contentStyle]}>{children}</View>
-          </ImageBackground>
-        ) : (
-          <View style={[styles.content, contentStyle]}>{children}</View>
-        )}
+      <View style={styles.container}>
+        <ScrollView
+          {...props}
+          ref={ref}
+          keyboardShouldPersistTaps="always"
+          scrollEventThrottle={16}
+          //   onScroll={scrollHandler}
+          style={[
+            styles.default_container,
+            {
+              backgroundColor: theme.background,
+            },
+            customStyle,
+          ]}
+          contentContainerStyle={[
+            styles.contentContainer,
+            // {
+            //   paddingTop: headerComponent
+            //     ? 70 + (StatusBar.currentHeight || 0)
+            //     : 0,
+            // },
+          ]}>
+          {displayBackgroundImage ? (
+            <ImageBackground
+              source={backgroundImage}
+              resizeMode="stretch"
+              style={styles.backgroundImage}>
+              <View
+                style={[
+                  styles.content,
+                  {paddingTop: StatusBar.currentHeight ?? 0},
+                  contentStyle,
+                ]}>
+                {/* {headerComponent &&
+                  React.cloneElement(headerComponent as React.ReactElement, {
+                    scrollY,
+                  })} */}
+                {children}
+              </View>
+            </ImageBackground>
+          ) : (
+            <View
+              style={[
+                styles.content,
+                {paddingTop: StatusBar.currentHeight ?? 0},
+                contentStyle,
+              ]}>
+              {children}
+            </View>
+          )}
+        </ScrollView>
       </View>
     );
   },
 );
 
-// export default ScreenComponent;
-
-export const AnimatedScreenComponent =
-  Animated.createAnimatedComponent(ScreenComponent);
-
 const styles = StyleSheet.create({
-  default_container: {
-    // flex: 1,
-    width: SCREEN_WIDTH,
-    alignContent: 'center',
-    justifyContent: 'center',
+  container: {
+    flex: 1,
+    display: 'flex',
+    // justifyContent: 'center',
     // alignItems: 'center',
-  },
-
-  backgroundImage: {
-    // flex: 1,
-    width: SCREEN_WIDTH,
-    height: '100%',
-    alignSelf: 'center',
-  },
-
-  content: {
-    // flex: 1,
-    height: '100%',
+    // borderWidth: 2,
     width: '100%',
+  },
+  default_container: {
+    width: SCREEN_WIDTH,
+    flex: 1,
+    // backgroundColor: 'red',
+  },
+  contentContainer: {
+    flexGrow: 1,
+  },
+  backgroundImage: {
+    flex: 1,
+    width: '100%',
+    borderWidth: 2,
+    // height: '100%',
+    // alignSelf: 'center',
+  },
+  content: {
+    width: SCREEN_WIDTH,
+    flex: 1,
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
-    alignContent: 'flex-start',
   },
 });

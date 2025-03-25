@@ -11,12 +11,12 @@ import {
 } from 'react-native';
 import CustomContainerComponent from '../native_components/ContainerComponent';
 import CustomButton from '../native_components/ButtonComponent';
-import {useSettingContext} from '@src/context/SettingContext';
 import CustomText from '../native_components/CustomText';
 import {useNavigation} from '@react-navigation/native';
+import {useReduxSelector} from '@src/hooks/useReduxSelector';
 
 export const OtherLoginOptionComponent: React.FC = () => {
-  const {state} = useSettingContext();
+  const {theme} = useReduxSelector();
 
   //   const navigation = useNavigation();
 
@@ -35,7 +35,7 @@ export const OtherLoginOptionComponent: React.FC = () => {
       {/* Google login button */}
       <CustomText
         textWeight="medium"
-        customStyle={{fontSize: 16, color: state.theme.placeHolder}}>
+        customStyle={{fontSize: 16, color: theme.placeHolder}}>
         OR
       </CustomText>
 

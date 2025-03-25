@@ -1,9 +1,9 @@
 import {StyleSheet, Text, View} from 'react-native';
 import React from 'react';
-import CustomButton from './native_components/ButtonComponent';
+import CustomButton from '../native_components/ButtonComponent';
 import {CircularRightArrow} from '@src/assets/svg/CircularRightArrow';
-import CustomText from './native_components/CustomText';
-import {useSettingContext} from '@src/context/SettingContext';
+import CustomText from '../native_components/CustomText';
+import {useReduxSelector} from '@src/hooks/useReduxSelector';
 
 type ArrowButtonProps = {
   label: string;
@@ -11,7 +11,7 @@ type ArrowButtonProps = {
 };
 
 const ArrowButton: React.FC<ArrowButtonProps> = ({label, onPress}) => {
-  const {state} = useSettingContext();
+  const {theme} = useReduxSelector();
 
   return (
     <CustomButton
@@ -23,7 +23,7 @@ const ArrowButton: React.FC<ArrowButtonProps> = ({label, onPress}) => {
         position: 'relative',
         marginTop: 35,
       }}>
-      <CustomText customStyle={{color: state.theme.textOnContainer}}>
+      <CustomText customStyle={{color: theme.textOnContainer}}>
         {label}
       </CustomText>
       <CircularRightArrow

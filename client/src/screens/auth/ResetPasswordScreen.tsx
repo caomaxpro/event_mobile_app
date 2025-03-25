@@ -5,8 +5,6 @@ import {CustomTextInputComponent} from '@src/components/form/CustomInputField';
 import {CustomEmailInputComponent} from '@src/components/form/EmailInputComponent';
 import CustomText from '@src/components/native_components/CustomText';
 import HeaderComponent from '@src/components/HeaderComponent';
-import {useSettingContext} from '@src/context/SettingContext';
-import {useEmailInput} from '@src/hooks/useInputField';
 import {log} from '@src/utils/logUtils';
 import React, {useState, useRef, useEffect} from 'react';
 import {
@@ -16,20 +14,45 @@ import {
   TouchableOpacity,
   StyleSheet,
 } from 'react-native';
-import {useLoginForm} from '@src/hooks/useLoginForm';
-import {CustomPasswordInputComponent} from '@src/components/form/PasswordInputComponent';
-import {useRegisterForm} from '@src/hooks/useRegisterForm';
+
 import {sendEmail} from '@src/services/authService';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {useAppNavigation} from '@src/hooks/userAppNavigation';
+import {useReduxForm} from '@src/hooks/useReduxForm';
+import {FORM_IDS} from '@src/constants/formIds';
+import {PasswordInputComponent} from '@src/components/form/PasswordInputComponent';
 
 export const ResetPasswordScreen = (): React.JSX.Element => {
-  const {emailField, passwordField, repasswordField} = useRegisterForm();
+  const {registerField, handleSubmit, reset} = useReduxForm(
+    FORM_IDS.VERIFY_EMAIL,
+  );
+
+  const {
+    registerField: registerPasswordField,
+    handleSubmit: handleSubmitPassword,
+  } = useReduxForm(FORM_IDS.RESET_PASSWORD);
+
+  const emailField = registerField('email', {
+    type: 'email',
+    required: true,
+  });
+
+  const passwordField = registerPasswordField('password', {
+    type: 'password',
+    required: true,
+  });
+
+  const repasswordField = registerPasswordField('repassword', {
+    type: 'password',
+    required: true,
+  });
+
   const {authNavigation} = useAppNavigation();
 
   const [isEmailVerified, setEmailVerified] = useState<boolean>(false);
 
   const handleSendEmailRequest = async () => {
+    // send api request
     const response = await sendEmail(emailField.value);
 
     if (response.status === 200) {
@@ -65,10 +88,10 @@ export const ResetPasswordScreen = (): React.JSX.Element => {
           <CustomEmailInputComponent inputField={emailField} />
         ) : (
           <CustomContainerComponent contentStyle={{flexDirection: 'column'}}>
-            <CustomPasswordInputComponent passwordField={passwordField} />
-            <CustomPasswordInputComponent
-              passwordField={repasswordField}
-              confirmPassword={true}
+            <PasswordInputComponent inputField={passwordField} />
+            <PasswordInputComponent
+              inputField={passwordField}
+              confirmPassword
             />
           </CustomContainerComponent>
         )}

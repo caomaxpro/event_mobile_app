@@ -9,7 +9,7 @@ import CustomText from './native_components/CustomText';
 type HeaderComponentProp = {
   title?: string;
   hideTitle?: boolean;
-  navigation: any;
+  navigation?: any;
 };
 
 const HeaderComponent: React.FC<HeaderComponentProp> = ({
@@ -28,12 +28,17 @@ const HeaderComponent: React.FC<HeaderComponentProp> = ({
         alignContent: 'center',
         alignItems: 'center',
         paddingHorizontal: 10,
+        backgroundColor: 'red',
       }}
       customStyle={{
         width: '100%',
         height: 60,
         position: 'absolute',
-        // top: StatusBar?.currentHeight || 0,
+        backgroundColor: 'red',
+        borderWidth: 2,
+        top: StatusBar?.currentHeight || 0,
+        right: 0,
+        zIndex: 10,
       }}>
       <CustomButton
         customStyle={{
@@ -42,7 +47,7 @@ const HeaderComponent: React.FC<HeaderComponentProp> = ({
           height: 60,
         }}
         onPress={() => {
-          navigation.goBack();
+          navigation?.goBack();
         }}>
         <CustomIcon type="FontAwesome6" name="arrow-left" size={22} />
       </CustomButton>

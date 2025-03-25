@@ -1,18 +1,12 @@
 import {StyleSheet, Text, View} from 'react-native';
 import React, {useState} from 'react';
 import CustomContainerComponent from '../native_components/ContainerComponent';
-import CustomIcon from './CustomIcon';
+import CustomIcon from '../native_components/CustomIcon';
 import CustomText from '../native_components/CustomText';
-import {useSettingContext} from '@src/context/SettingContext';
 import CustomButton from '../native_components/ButtonComponent';
 import {useNavigation} from '@react-navigation/native';
-// import {Icon} from 'react-native-vector-icons/';
-
-{
-  /* <Icon name="" />; */
-}
-// import {StackNavigationProp} from '@react-navigation/stack';
 import {SCREEN_WIDTH} from '@src/utils/appInfo';
+import {useReduxSelector} from '@src/hooks/useReduxSelector';
 
 // type NavigationType = StackNavigationProp<AuthStackParamList>;
 
@@ -29,8 +23,7 @@ const OnboardingSkip: React.FC<OnboardingSkipProps> = ({
   message1,
   message2,
 }) => {
-  const {state} = useSettingContext();
-  const theme = state.theme;
+  const {theme} = useReduxSelector();
 
   // const navigation = useNavigation();
 

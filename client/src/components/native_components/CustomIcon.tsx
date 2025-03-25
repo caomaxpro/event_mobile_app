@@ -1,8 +1,8 @@
 import React from 'react';
 import {View, ViewStyle, StyleSheet} from 'react-native';
 
-import {Icon} from './Icon';
-import {useSettingContext} from '@src/context/SettingContext';
+import {Icon} from '../Icon';
+import {useReduxSelector} from '@src/hooks/useReduxSelector';
 
 export interface CustomIconProps {
   type:
@@ -50,8 +50,7 @@ const CustomIcon: React.FC<CustomIconProps> = ({
   color = 'black',
   style,
 }) => {
-  const {state} = useSettingContext();
-  const theme = state.theme;
+  const {theme} = useReduxSelector();
 
   const IconComponent = iconTypes[type] || Icon.FontAwesome5; // Mặc định là FontAwesome5 nếu type không hợp lệ
 

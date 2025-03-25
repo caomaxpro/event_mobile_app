@@ -1,6 +1,6 @@
 import { User } from "@src/types/types";
 
-export const Users: User[] = [
+export const Users: Partial<User>[] = [
     {
       "username": "AdminMaster",
       "email": "admin@example.com",
@@ -15,10 +15,10 @@ export const Users: User[] = [
       },
       "events_created": [],
       "events_joined": [],
-      "join_date": new Date("2020-05-15T00:00:00Z"),
-      "last_login": new Date("2025-03-05T12:00:00Z"),
+      "join_date": new Date("2020-05-15T00:00:00Z").toISOString(),
+      "last_login": new Date("2025-03-05T12:00:00Z").toISOString(),
       "account_status": "active",
-      "is_verified": true,
+      "is_verified": true,  
       "subscription_plan": "premium",
       "payment_history": ["INV12345", "INV67890"]
     },
@@ -36,8 +36,8 @@ export const Users: User[] = [
       },
       "events_created": [],
       "events_joined": [],
-      "join_date": new Date("2023-03-10T00:00:00Z"),
-      "last_login": new Date("2025-03-05T12:00:00Z"),
+      "join_date": new Date("2023-03-10T00:00:00Z").toISOString(),
+      "last_login": new Date("2025-03-05T12:00:00Z").toISOString(),
       "account_status": "active",
       "is_verified": true,
       "subscription_plan": "free",
@@ -57,8 +57,8 @@ export const Users: User[] = [
       },
       "events_created": [],
       "events_joined": [],
-      "join_date": new Date("2022-07-22T00:00:00Z"),
-      "last_login": new Date("2025-03-05T12:00:00Z"),
+      "join_date": new Date("2022-07-22T00:00:00Z").toISOString(),
+      "last_login": new Date("2025-03-05T12:00:00Z").toISOString(),
       "account_status": "active",
       "is_verified": true,
       "subscription_plan": "premium",
