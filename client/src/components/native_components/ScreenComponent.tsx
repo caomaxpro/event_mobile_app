@@ -7,7 +7,6 @@ import {
   ScrollView,
   ScrollViewProps,
   StatusBar,
-  KeyboardAvoidingView,
 } from 'react-native';
 import React, {forwardRef} from 'react';
 import {SCREEN_HEIGHT, SCREEN_WIDTH} from '@src/utils/appInfo';
@@ -15,8 +14,8 @@ import {useReduxSelector} from '@src/hooks/useReduxSelector';
 import Animated, {
   useSharedValue,
   useAnimatedScrollHandler,
+  withTiming,
 } from 'react-native-reanimated';
-import {KeyboardAwareScrollView} from 'react-native-keyboard-controller';
 
 const AnimatedScrollView = Animated.createAnimatedComponent(ScrollView);
 
@@ -29,7 +28,10 @@ type ScreenComponentProps = ScrollViewProps & {
   scrollEnabled?: boolean;
 };
 
-export const ScreenComponent = forwardRef<ScrollView, ScreenComponentProps>(
+export const ScreenComponent = forwardRef<
+  Animated.ScrollView,
+  ScreenComponentProps
+>(
   (
     {
       children,
@@ -46,20 +48,21 @@ export const ScreenComponent = forwardRef<ScrollView, ScreenComponentProps>(
     const backgroundImage = theme.bgImage;
     const scrollY = useSharedValue(0);
 
-    const scrollHandler = useAnimatedScrollHandler({
-      onScroll: event => {
+    const scrollHandler = useAnimatedScrollHandler(event => {
+      'worklet';
+      if (event?.contentOffset?.y !== undefined) {
         scrollY.value = event.contentOffset.y;
-      },
+      }
     });
 
     return (
       <View style={styles.container}>
-        <ScrollView
+        <Animated.ScrollView
           {...props}
           ref={ref}
           keyboardShouldPersistTaps="always"
           scrollEventThrottle={16}
-          //   onScroll={scrollHandler}
+          onScroll={scrollHandler}
           style={[
             styles.default_container,
             {
@@ -103,7 +106,7 @@ export const ScreenComponent = forwardRef<ScrollView, ScreenComponentProps>(
               {children}
             </View>
           )}
-        </ScrollView>
+        </Animated.ScrollView>
       </View>
     );
   },

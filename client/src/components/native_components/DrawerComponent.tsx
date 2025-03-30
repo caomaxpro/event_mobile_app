@@ -17,9 +17,11 @@ import {
   IOSReferenceFrame,
   useAnimatedStyle,
   withTiming,
+  useSharedValue,
 } from 'react-native-reanimated';
 import {ms} from '@src/utils/rNResponsive';
 import {SCREEN_HEIGHT} from '@src/utils/appInfo';
+import {useEffect} from 'react';
 
 type DrawerSection = {
   icon: React.FC<SvgProps>;
@@ -85,6 +87,11 @@ export const CustomDrawerContent: React.FC<CustomDrawerContentProp> = ({
   isDrawerOpened,
 }): React.JSX.Element => {
   const {drawerNavigation, authNavigation} = useAppNavigation();
+  const drawerState = useSharedValue(isDrawerOpened ? 1 : 0);
+  
+  useEffect(() => {
+    drawerState.value = isDrawerOpened ? 1 : 0;
+  }, [isDrawerOpened]);
 
   const customContainerComponentStyle = useAnimatedStyle(() => {
     return {
@@ -93,9 +100,7 @@ export const CustomDrawerContent: React.FC<CustomDrawerContentProp> = ({
       left: 0,
       height: SCREEN_HEIGHT,
       //   zIndex: isDrawerOpened ? 0 : -1,
-      opacity: isDrawerOpened
-        ? withTiming(1, {duration: 500})
-        : withTiming(0, {duration: 500}),
+      opacity: withTiming(drawerState.value, {duration: 500}),
       //   transform: [{translateX: isDrawerOpened ? '70%' : '0%'}],
       backgroundColor: 'transparent',
     };

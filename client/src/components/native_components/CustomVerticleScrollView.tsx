@@ -6,6 +6,10 @@ import {
   ViewStyle,
   ScrollViewProps,
 } from 'react-native';
+import Animated, {
+  useAnimatedScrollHandler,
+  useSharedValue,
+} from 'react-native-reanimated';
 
 interface CustomScrollViewProps extends ScrollViewProps {
   contentContainerStyle?: ViewStyle;
@@ -18,18 +22,30 @@ const CustomVerticleScrollView: React.FC<CustomScrollViewProps> = ({
   ...props
 }) => {
   const [height, setHeight] = useState<number>(0);
+  const scrollOffset = useSharedValue(0);
+
+  const scrollHandler = useAnimatedScrollHandler((event) => {
+    'worklet';
+    if (event?.contentOffset?.y !== undefined) {
+      scrollOffset.value = event.contentOffset.y;
+    }
+  });
 
   return (
-    <ScrollView
+    <Animated.ScrollView
       {...props}
+      onScroll={scrollHandler}
+      scrollEventThrottle={16}
       onLayout={event => {
-        setHeight(event.nativeEvent.layout.height);
+        if (event?.nativeEvent?.layout?.height) {
+          setHeight(event.nativeEvent.layout.height);
+        }
       }}
       contentContainerStyle={[{height: height}, contentContainerStyle]}
-      showsVerticalScrollIndicator={true} // Hide scroll indicator
+      showsVerticalScrollIndicator={true}
     >
       {children}
-    </ScrollView>
+    </Animated.ScrollView>
   );
 };
 

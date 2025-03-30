@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {View, Text, Pressable, StyleSheet} from 'react-native';
 import Animated, {
   useSharedValue,
@@ -20,9 +20,12 @@ const CustomToggle: React.FC<CustomToggleProps> = ({
 }) => {
   const progress = useSharedValue(value ? 1 : 0);
 
+  useEffect(() => {
+    progress.value = withTiming(value ? 1 : 0, {duration: 200});
+  }, [value]);
+
   const toggleSwitch = () => {
     setValue(!value);
-    progress.value = withTiming(!value ? 1 : 0, {duration: 200});
   };
 
   const animatedThumbStyle = useAnimatedStyle(() => ({

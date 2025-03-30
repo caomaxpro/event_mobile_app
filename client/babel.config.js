@@ -4,23 +4,22 @@ module.exports = {
     [
       'module:react-native-dotenv',
       {
-        envName: 'EVENT_HUB_ENV',
         moduleName: '@env',
-        path: './client/.env',
-        blocklist: null,
-        allowlist: null,
-        safe: true,
-        verbose: false,
+        path: '.env',
+        blacklist: null,
+        whitelist: null,
+        safe: false,
+        allowUndefined: true,
       },
     ],
     [
       'module-resolver',
       {
-        root: ['./src', './'],
+        root: ['./src'],
+        extensions: ['.ios.js', '.android.js', '.js', '.ts', '.tsx', '.json'],
         alias: {
           '@src': './src',
           '@root': './',
-          '@env': './.env',
         },
       },
     ],
