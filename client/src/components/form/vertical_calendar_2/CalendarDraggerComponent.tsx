@@ -7,19 +7,19 @@ import Animated, {
   runOnJS,
 } from 'react-native-reanimated';
 import {DraggingButton} from '@src/assets/svg/bottom_bar_svg/DraggingButton';
+import {GestureType} from 'react-native-gesture-handler/lib/typescript/handlers/gestures/gesture';
 
 const AnimatedDraggingButton = Animated.createAnimatedComponent(DraggingButton);
 
 interface CalendarDraggerProps {
   isLeft?: boolean;
   draggerStyle: any;
-  panGesture: any;
-  // Thêm các props mới
+  panGesture: GestureType;
   draggerMonth: SharedValue<number>;
   draggerYear: SharedValue<number>;
   currentMonth: number;
   currentYear: number;
-  isVisible?: boolean; // Optional prop để kiểm soát việc hiển thị từ parent
+  isVisible?: boolean;
 }
 
 const CalendarDragger: React.FC<CalendarDraggerProps> = ({

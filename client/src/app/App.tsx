@@ -34,8 +34,10 @@ import {SafeAreaProvider, SafeAreaView} from 'react-native-safe-area-context';
 import EventFormComponent from '@src/screens/bottom_tab/EventFormComponent';
 import CreateEventModal from '@src/modals/CreateEventModal';
 import FilterEventModal from '@src/modals/EventFilterModal';
-import SnapVerticalCalender from '@src/components/vertical_calendar/SnapVerticalCalender';
-import SnapVerticalCalender_Test from '@src/components/vertical_calendar/SnapVerticalCalender.Test';
+// import SnapVerticalCalender from '@src/components/vertical_calendar/SnapVerticalCalender';
+import SnapVerticalCalender from '@src/components/form/vertical_calendar_2/SnapVerticalCalender';
+import CalendarListComponent from '@src/components/form/vertical_calendar_2/CalendarListComponent';
+// import SnapVerticalCalender_Test from '@src/components/vertical_calendar/SnapVerticalCalender.Test';
 
 type user = {
   email: string;
@@ -61,7 +63,8 @@ function App(): React.JSX.Element {
       <SafeAreaView style={{flex: 1}} edges={['left', 'right']}>
         {/* <EventFormComponent /> */}
 
-        <SnapVerticalCalender />
+        {/* <SnapVerticalCalender /> */}
+        <CalendarListComponent />
 
         {/* <NavigationContainer>
           <CreateEventModal navigation={null} />
