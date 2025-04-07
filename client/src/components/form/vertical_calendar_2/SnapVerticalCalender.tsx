@@ -23,6 +23,7 @@ import CustomText from '@src/components/native_components/CustomText';
 import {CALENDAR_CONSTANTS} from './constants';
 import CalendarSkeleton from './CalendarSkeleton';
 import {VisibleMonth} from '@src/contexts/CalendarProvider';
+import SelectionModeOptions from './SelectionOptionModes';
 
 interface CalendarMonth {
   month: number;
@@ -267,24 +268,35 @@ const SnapVerticalCalenderInner = () => {
     }) => {
       if (!viewableItems.length) return;
 
-      // Log visible months from FlashList
-      // logVisibleMonths(viewableItems);
-
       // Update visible months in context
-      setVisibleMonths(
-        viewableItems.map(({item}) => {
-          console.log('item', item);
+      // Tạo danh sách visibleMonths mới
+      const newVisibleMonths = viewableItems.map(({item}) => ({
+        month: item.month,
+        year: item.year,
+        position: {
+          top: item.position.top,
+          bottom: item.position.bottom,
+        },
+      }));
 
-          return {
-            month: item.month,
-            year: item.year,
-            position: {
-              top: item.position.top,
-              bottom: item.position.bottom,
-            },
-          };
-        }),
-      );
+      // So sánh với visibleMonths hiện tại
+      setVisibleMonths(prevVisibleMonths => {
+        const isSame =
+          prevVisibleMonths.length === newVisibleMonths.length &&
+          prevVisibleMonths.every(
+            (prev, index) =>
+              prev.month === newVisibleMonths[index].month &&
+              prev.year === newVisibleMonths[index].year,
+          );
+
+        // Nếu không có sự khác biệt, không cập nhật
+        if (isSame) {
+          return prevVisibleMonths;
+        }
+
+        // Nếu có sự khác biệt, cập nhật visibleMonths
+        return newVisibleMonths;
+      });
     },
     [scrollOffset.value.y],
   );
@@ -317,21 +329,14 @@ const SnapVerticalCalenderInner = () => {
           style={{
             display: 'flex',
             flexDirection: 'row',
-            justifyContent: 'center',
-            alignContent: 'center',
-            alignItems: 'center',
-            height: 40,
+            // justifyContent: 'center',
+            // alignContent: 'center',
+            // alignItems: 'center',
+            height: 'auto',
             borderWidth: 1,
             width: 350,
           }}>
-          <CustomSwitchButton
-            value={selectionMode}
-            onValueChange={setSelectionMode}
-          />
-          <CustomText
-            customStyle={{marginLeft: 10, borderWidth: 1, height: 20}}>
-            Range Selection
-          </CustomText>
+          <SelectionModeOptions />
         </View>
 
         <View>
@@ -344,7 +349,10 @@ const SnapVerticalCalenderInner = () => {
             <FlashList
               ref={flashListRef}
               data={calendars}
-              contentContainerStyle={{backgroundColor: 'blue', padding: 0}}
+              contentContainerStyle={{
+                backgroundColor: 'white',
+                padding: 0,
+              }}
               renderItem={renderItem}
               estimatedItemSize={CALENDAR_CONSTANTS.TOTAL_HEIGHT}
               onScroll={handleScroll}
@@ -377,15 +385,6 @@ const SnapVerticalCalenderInner = () => {
                   stiffness: 90,
                 });
               }}
-              //   onS
-              //   onMomentumScrollBegin={(
-              //     event: NativeSyntheticEvent<NativeScrollEvent>,
-              //   ) => {
-              //     console.log(
-              //       'onMomentumScrollBegin',
-              //       event.nativeEvent.velocity?.y,
-              //     );
-              //   }}
             />
           </Animated.View>
         </View>

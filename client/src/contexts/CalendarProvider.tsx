@@ -39,13 +39,14 @@ export type CalendarDayItem = {
   day: number;
   date: Date;
   index: number;
+  isStartDay: boolean;
+  isEndDay: boolean;
   isToday: boolean;
   isSelected: boolean;
   isInRange: boolean;
   isDisabled: boolean;
   isPastDay: boolean;
   isMovable: boolean;
-  coordinate: CalendarCoordinate;
 };
 
 export type CalendarDayMap = {
@@ -78,7 +79,7 @@ type Bound = {
   lowerContext: number;
 };
 
-export type SelectionMode = 'single' | 'range';
+export type SelectionMode = 'single' | 'multiple' | 'range';
 
 // Context interface
 interface CalendarContextValue {
@@ -87,58 +88,35 @@ interface CalendarContextValue {
   year: SharedValue<number>;
   date: Date;
 
-  // Animated values
-  leftX: SharedValue<number>;
-  leftY: SharedValue<number>;
-
   scrollOffset: SharedValue<{x: number; y: number}>;
 
-  // Gestures
-  leftDragger: GestureType;
-  rightDragger: GestureType;
-
-  // Styles
-  leftDraggerStyle: AnimatedStyle<ViewStyle>;
-  rightDraggerStyle: AnimatedStyle<ViewStyle>;
+  selectedDay: CalendarDayItem | null;
+  setSelectedDay: React.Dispatch<React.SetStateAction<CalendarDayItem | null>>;
+  selectedDays: CalendarDayItem[];
+  setSelectedDays: React.Dispatch<React.SetStateAction<CalendarDayItem[]>>;
 
   // Methods
   formatMonthYear: (date: Date) => string;
-  highlightPastDays: (day: number) => string;
-  changeCalander: (type: 'next' | 'previous') => void;
   generateCalendarDays: (
     itemYear: number,
     itemMonth: number,
   ) => CalendarDayItem[];
-  onMonthChange: ((direction: 'next' | 'previous') => void) | null;
-  handleCellPress: (item: CalendarDayItem) => void;
-  setOnMonthChange: React.Dispatch<
-    React.SetStateAction<((direction: 'next' | 'previous') => void) | null>
-  >;
-
-  // Thêm các giá trị x, y của dragger
-  leftDraggerX: SharedValue<number>;
-  leftDraggerY: SharedValue<number>;
-  rightDraggerX: SharedValue<number>;
-  rightDraggerY: SharedValue<number>;
-
-  // add bounds
-  bound1: SharedValue<Bound>;
-  bound2: SharedValue<Bound>;
-
   startDate: CalendarDayItem | null;
   setStartDate: React.Dispatch<React.SetStateAction<CalendarDayItem | null>>;
   endDate: CalendarDayItem | null;
   setEndDate: React.Dispatch<React.SetStateAction<CalendarDayItem | null>>;
   movableDay: CalendarDayItem | null;
   setMovableDay: React.Dispatch<React.SetStateAction<CalendarDayItem | null>>;
-  selectionMode: boolean;
-  setSelectionMode: React.Dispatch<React.SetStateAction<boolean>>;
+  selectionMode: SelectionMode;
+  setSelectionMode: React.Dispatch<React.SetStateAction<SelectionMode>>;
 
   visibleDays: CalendarDayItem[];
   setVisibleDays: React.Dispatch<React.SetStateAction<CalendarDayItem[]>>;
 
   visibleMonths: VisibleMonth[];
   setVisibleMonths: React.Dispatch<React.SetStateAction<VisibleMonth[]>>;
+
+  handlePress: (pressedItem: CalendarDayItem) => void;
 }
 
 // Create context
@@ -173,108 +151,23 @@ export const CalendarProvider: React.FC<{children: React.ReactNode}> = ({
     ((direction: 'next' | 'previous') => void) | null
   >(null);
 
-  const leftX = useSharedValue(0);
-  const leftY = useSharedValue(0);
+  // single mode
+  const [selectedDay, setSelectedDay] = useState<CalendarDayItem | null>(null);
 
-  const bound1 = useSharedValue<Bound>({
-    upper: 0,
-    upperContext: 0,
-    lower: 0,
-    lowerContext: 0,
-  });
-
-  const bound2 = useSharedValue<Bound>({
-    upper: 0,
-    upperContext: 0,
-    lower: 0,
-    lowerContext: 0,
-  });
-
+  // range mode
   const [startDate, setStartDate] = useState<CalendarDayItem | null>(null);
   const [endDate, setEndDate] = useState<CalendarDayItem | null>(null);
-  const [selectedDays, setSelectedDays] = useState<CalendarDayItem[]>([]);
   const [movableDay, setMovableDay] = useState<CalendarDayItem | null>(null);
 
+  // multiple mode
+  const [selectedDays, setSelectedDays] = useState<CalendarDayItem[]>([]);
+
   const [visibleMonths, setVisibleMonths] = useState<VisibleMonth[]>([]);
-  const [selectionMode, setSelectionMode] = useState<boolean>(false);
+  const [selectionMode, setSelectionMode] = useState<SelectionMode>('single');
 
-  // Refs
-  const flatListRef = useRef<FlatList>(null);
-  const isMonthChangeCooldown = useSharedValue(false);
-
-  // Default positions
-  const defaultX = currentColumn * CELL_SIZE;
-  const defaultY = currentRow * CELL_SIZE;
-
-  //   useAnimatedReaction(
-  //     () => scrollOffset.value.y,
-  //     (cur, prev) => {
-  //       // calculate offset
-  //       const offset = cur - Math.trunc(cur / 300) * 300;
-  //       bound1.value.upper = bound1.value.upperContext - offset;
-  //       bound1.value.lower = bound1.value.upper + 300;
-
-  //       bound2.value.upper = bound2.value.upperContext + 300 - offset;
-  //       bound2.value.lower = bound2.value.upper + 300;
-
-  //       //   console.log('[Bound 1: ] ', bound1);
-  //       //   console.log('[Bound 2: ] ', bound2);
-  //     },
-  //     [scrollOffset],
-  //   );
-
-  // Batch updates
-  const handleMonthChange = useCallback((direction: 'next' | 'previous') => {
-    requestAnimationFrame(() => {
-      if (direction === 'next') {
-        if (month.value === 11) {
-          year.value = year.value + 1;
-          month.value = 0;
-        } else {
-          month.value = month.value + 1;
-        }
-      } else {
-        if (month.value === 0) {
-          year.value = year.value - 1;
-          month.value = 11;
-        } else {
-          month.value = month.value - 1;
-        }
-      }
-    });
-  }, []);
-
-  const leftDragger = useLeftDragger({
-    defaultX,
-    defaultY,
-    initialMonth: month.value,
-    initialYear: year.value,
-    daysMap,
-    rightDraggerPosition: {
-      x: defaultX,
-      y: defaultY,
-    },
-    onDragBeyondBound: () => {
-      console.log('Dragged beyond bound');
-    },
-    onMonthChange: (direction: 'next' | 'previous') => {
-      handleMonthChange(direction);
-    },
-  });
-
-  const rightDragger = useRightDragger({
-    defaultX,
-    defaultY,
-    initialMonth: month.value,
-    initialYear: year.value,
-    daysMap,
-    leftDraggerPosition: {
-      x: leftDragger.x.value,
-      y: leftDragger.y.value,
-      month: leftDragger.month.value,
-      year: leftDragger.year.value,
-    },
-  });
+  useEffect(() => {
+    console.log('[Calendar Provider]', startDate, endDate);
+  }, [startDate, endDate]);
 
   // Methods
   const formatMonthYear = useCallback((date: Date): string => {
@@ -305,6 +198,8 @@ export const CalendarProvider: React.FC<{children: React.ReactNode}> = ({
             date.getMonth() === today.getMonth() &&
             date.getFullYear() === today.getFullYear(),
           isSelected: false,
+          isStartDay: false,
+          isEndDay: false,
           isInRange: false,
           isDisabled: false,
           isMovable: false,
@@ -319,116 +214,91 @@ export const CalendarProvider: React.FC<{children: React.ReactNode}> = ({
     [],
   );
 
+  const setMovingDay = useCallback(
+    (
+      currentMovableDay: CalendarDayItem | null,
+      pressedItem: CalendarDayItem,
+    ) => {
+      if (!startDate || !endDate) return;
+      if (
+        pressedItem.date.getTime() !== startDate.date.getTime() &&
+        pressedItem.date.getTime() !== endDate.date.getTime()
+      ) {
+        return;
+      }
+
+      // If the pressed item is the same as the current movable day, reset the movable day
+      if (currentMovableDay?.date.getTime() === pressedItem.date.getTime()) {
+        setMovableDay(null);
+        return;
+      }
+
+      // If the pressed item is the same as the start date, set the movable day to the
+
+      setMovableDay(pressedItem);
+    },
+    [startDate, endDate, movableDay],
+  );
+
+  const handleMovingDay = useCallback(
+    (
+      currentMovableDay: CalendarDayItem,
+      currentStartDate: CalendarDayItem,
+      currentEndDate: CalendarDayItem,
+      pressedItem: CalendarDayItem,
+    ) => {
+      if (!currentStartDate || !currentEndDate || !currentMovableDay) return;
+      if (
+        pressedItem.date.getTime() === currentStartDate.date.getTime() ||
+        pressedItem.date.getTime() === currentEndDate.date.getTime()
+      ) {
+        return;
+      }
+
+      if (
+        currentMovableDay.date.getTime() === currentStartDate.date.getTime()
+      ) {
+        setStartDate(pressedItem);
+      } else {
+        setEndDate(pressedItem);
+      }
+      setMovableDay(pressedItem);
+    },
+    [setStartDate, setEndDate, setMovingDay],
+  );
+
+  const handlePress = useCallback(
+    (pressedItem: CalendarDayItem) => {
+      if (pressedItem.day === 0 || pressedItem.isDisabled) return;
+
+      if (!startDate && !endDate) {
+        setStartDate(pressedItem);
+        return;
+      }
+
+      if (startDate && !endDate) {
+        setEndDate(pressedItem);
+        return;
+      }
+
+      if (startDate && endDate && !movableDay) {
+        setMovingDay(null, pressedItem);
+        return;
+      }
+
+      if (startDate && endDate && movableDay) {
+        // If the pressed item is the same as the current movable day, reset the movable day
+        setMovingDay(movableDay, pressedItem);
+        handleMovingDay(movableDay, startDate, endDate, pressedItem);
+        return;
+      }
+    },
+    [startDate, endDate, movableDay, setStartDate, setEndDate, handleMovingDay],
+  );
+
   // can only set moving day if startDate and endDate are set
   // moving day can only be startDate or endDate
   // can be disable if
-  const setMovingDay = (item: CalendarDayItem) => {
-    if (!startDate || !endDate) return;
-    if (
-      item.date.getTime() !== startDate.date.getTime() &&
-      item.date.getTime() !== endDate.date.getTime()
-    ) {
-      return;
-    }
-
-    // if item is already movable, remove it
-    if (movableDay?.date.getTime() === item.date.getTime()) {
-      setMovableDay(null);
-      return;
-    }
-
-    // if item is startDate or endDate, set it as movable
-    // console.log('setMovingDay', item);
-
-    let oldMovableDay = {...movableDay};
-
-    // update days
-    // setDays(prevState =>
-    //   prevState.map(day => {
-    //     if (day.date.getTime() === item.date.getTime()) {
-    //       return {
-    //         ...day,
-    //         isMovable: true,
-    //       };
-    //     }
-
-    //     if (
-    //       oldMovableDay?.date &&
-    //       day.date.getTime() === oldMovableDay?.date.getTime()
-    //     ) {
-    //       return {
-    //         ...day,
-    //         isMovable: false,
-    //       };
-    //     }
-    //     return day;
-    //   }),
-    // );
-
-    setMovableDay(item);
-  };
-
-  // if startDate, endDate and movingDay are set, and press cell is neither startDate nor endDate, then change movingDay to that cell
-  const handleMovingDay = (item: CalendarDayItem) => {
-    if (!startDate || !endDate || !movableDay) return;
-    if (
-      item.date.getTime() === startDate.date.getTime() ||
-      item.date.getTime() === endDate.date.getTime()
-    ) {
-      return;
-    }
-
-    setMovingDay(item);
-  };
-
-  const handleCellPress = (item: CalendarDayItem) => {
-    console.log('handleCellPress', startDate, endDate);
-
-    if (item.day === 0 || item.isDisabled) return;
-
-    if (!startDate && !endDate) {
-      setStartDate(item);
-      return;
-    }
-
-    if (startDate && !endDate) {
-      setEndDate(item);
-      return;
-    }
-
-    if (startDate && endDate) {
-      setMovingDay(item);
-      return;
-    }
-
-    if (movableDay) {
-      handleMovingDay(item);
-    }
-  };
-
-  const highlightPastDays = useCallback((day: number): string => {
-    const date = new Date(year.value, month.value, day);
-    const currentDate = new Date();
-    let color = 'white';
-
-    if (date < currentDate) {
-      color = 'red';
-    }
-
-    if (date.toDateString() === currentDate.toDateString()) {
-      color = 'green';
-    }
-
-    return color;
-  }, []);
-
-  // Scroll control
-  const scrollToIndex = useCallback((index: number) => {
-    flatListRef.current?.scrollToIndex({
-      index,
-      animated: true,
-    });
-  }, []);
 
   // Effects
 
@@ -438,33 +308,16 @@ export const CalendarProvider: React.FC<{children: React.ReactNode}> = ({
       month,
       year,
       date,
-      leftX,
-      leftY,
       scrollOffset,
-      leftDragger: leftDragger.panGesture,
-      rightDragger: rightDragger.panGesture,
-      leftDraggerStyle: leftDragger.style,
-      rightDraggerStyle: rightDragger.style,
       formatMonthYear,
-      highlightPastDays,
-      changeCalander: handleMonthChange,
       generateCalendarDays,
-      onMonthChange,
-      handleCellPress,
-      setOnMonthChange,
-      scrollToIndex,
-      leftDraggerX: leftDragger.x,
-      leftDraggerY: leftDragger.y,
-      rightDraggerX: rightDragger.x,
-      rightDraggerY: rightDragger.y,
-      bound1,
-      bound2,
       startDate,
       setStartDate,
       endDate,
       setEndDate,
       movableDay,
       setMovableDay,
+
       selectionMode,
       setSelectionMode,
 
@@ -473,13 +326,19 @@ export const CalendarProvider: React.FC<{children: React.ReactNode}> = ({
 
       visibleMonths,
       setVisibleMonths,
+
+      selectedDay,
+      setSelectedDay,
+
+      selectedDays,
+      setSelectedDays,
+
+      handlePress,
     }),
     [
       month.value,
       year.value,
       date,
-      leftDragger,
-      rightDragger,
       onMonthChange,
       startDate,
       endDate,

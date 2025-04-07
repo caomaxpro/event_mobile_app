@@ -63,8 +63,8 @@ function App(): React.JSX.Element {
       <SafeAreaView style={{flex: 1}} edges={['left', 'right']}>
         {/* <EventFormComponent /> */}
 
-        {/* <SnapVerticalCalender /> */}
-        <CalendarListComponent />
+        <SnapVerticalCalender />
+        {/* <CalendarListComponent /> */}
 
         {/* <NavigationContainer>
           <CreateEventModal navigation={null} />

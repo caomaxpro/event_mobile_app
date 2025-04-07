@@ -29,15 +29,13 @@ const generateCalendarDays = (
       date: new Date(year, month, -firstDay + i + 1),
       index: i,
       isToday: false,
+      isStartDay: false,
+      isEndDay: false,
       isSelected: false,
       isInRange: false,
       isDisabled: true,
       isMovable: false,
       isPastDay: true,
-      coordinate: {
-        row: Math.floor(i / 7),
-        col: i % 7,
-      },
     });
   }
 
@@ -50,15 +48,13 @@ const generateCalendarDays = (
       date,
       index,
       isToday: date.getTime() === today.getTime(),
+      isEndDay: false,
+      isStartDay: false,
       isSelected: false,
       isInRange: false,
       isDisabled: false,
       isMovable: false,
       isPastDay: date < today,
-      coordinate: {
-        row: Math.floor(index / 7),
-        col: index % 7,
-      },
     });
   }
 
@@ -71,15 +67,13 @@ const generateCalendarDays = (
       date: new Date(year, month + 1, i + 1),
       index,
       isToday: false,
+      isStartDay: false,
+      isEndDay: false,
       isSelected: false,
       isInRange: false,
       isDisabled: true,
       isMovable: false,
       isPastDay: true,
-      coordinate: {
-        row: Math.floor(index / 7),
-        col: index % 7,
-      },
     });
   }
 
@@ -132,37 +126,44 @@ const CalendarItem: React.FC<CalendarItemProps> = ({itemMonth, itemYear}) => {
     startDate,
     endDate,
     movableDay,
+    visibleMonths,
     generateCalendarDays,
-    handleCellPress,
+    handlePress,
   } = useCalendar();
 
-  const [days, setDays] = useState<CalendarDayItem[]>(
-    generateCalendarDays(itemYear, itemMonth),
-  );
+  const [days, setDays] = useState<CalendarDayItem[]>([]);
 
   useEffect(() => {
+    console.log('[Calendar Item]: Re-rendering');
+  }, []);
+
+  useEffect(() => {
+    // I want to update specific days, to avoid re-rendering the entire calendar
+
     const newDays = generateCalendarDays(itemYear, itemMonth).map(day => {
       const isInRange =
         startDate &&
         endDate &&
-        day.date >= startDate.date &&
-        day.date <= endDate.date;
+        day.date.getTime() > startDate.date.getTime() &&
+        day.date.getTime() < endDate.date.getTime();
+      const isStartDate =
+        startDate && day.date.getTime() === startDate.date.getTime();
+      const isEndDate =
+        endDate && day.date.getTime() === endDate.date.getTime();
+      const isMovable =
+        movableDay && day.date.getTime() === movableDay.date.getTime();
 
       return {
         ...day,
-        isSelected: isInRange,
         isInRange,
+        isStartDay: isStartDate,
+        isEndDay: isEndDate,
+        isMovable,
       };
     });
 
-    setDays(
-      newDays.map(day => ({
-        ...day,
-        isSelected: !!day.isSelected,
-        isInRange: !!day.isInRange,
-      })),
-    );
-  }, [startDate, endDate, itemMonth, itemYear]);
+    setDays(newDays as CalendarDayItem[]);
+  }, [itemMonth, itemYear, startDate, endDate, movableDay]);
 
   return (
     <View style={styles.container}>
@@ -171,25 +172,19 @@ const CalendarItem: React.FC<CalendarItemProps> = ({itemMonth, itemYear}) => {
       {Array.from({length: 6}).map((_, rowIndex) => (
         <View key={`row-${rowIndex}`} style={styles.row}>
           {days.slice(rowIndex * 7, (rowIndex + 1) * 7).map((day, colIndex) => (
+            // <View key={`${rowIndex}-${colIndex}`}>
+            //   <CustomText>{day.day}</CustomText>
+            // </View>
             <OptimizedCalendarCell
               key={`${rowIndex}-${colIndex}`}
               item={day}
-              isHead={startDate?.date.getTime() === day.date.getTime()}
-              isTail={endDate?.date.getTime() === day.date.getTime()}
-              isInRange={
-                !!(
-                  startDate?.date &&
-                  endDate?.date &&
-                  day.date >= startDate.date &&
-                  day.date <= endDate.date
-                )
-              }
-              isSelected={
-                startDate?.date.getTime() === day.date.getTime() ||
-                endDate?.date.getTime() === day.date.getTime()
-              }
-              isMovable={day.isMovable}
-              onPress={() => handleCellPress(day)}
+              isInRange={day.isInRange}
+              isStartDate={day.isStartDay}
+              isEndDate={day.isEndDay}
+              isMovableDay={day.isMovable}
+              onPress={() => {
+                handlePress(day);
+              }}
             />
           ))}
         </View>
@@ -228,8 +223,8 @@ const styles = StyleSheet.create({
   },
   row: {
     flexDirection: 'row',
-    justifyContent: 'space-around',
-    alignItems: 'center',
+    justifyContent: 'flex-start',
+    alignItems: 'flex-start',
     height: CALENDAR_CONSTANTS.CELL_ROW_HEIGHT,
   },
 });
